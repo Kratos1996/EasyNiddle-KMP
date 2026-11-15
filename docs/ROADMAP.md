@@ -24,7 +24,7 @@
 
 ## Production
 - [x] Android/iOS/Desktop/WasmJs CI matrix
-- [ ] Sample application
+- [x] Runnable Compose Desktop sample application
 - [ ] API compatibility and R8 verification
 - [ ] KDoc, migration guide, cookbook
 - [ ] Maven Central publishing and signed releases

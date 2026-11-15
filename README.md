@@ -28,8 +28,18 @@ A developer-friendly, type-safe navigation layer for Compose Multiplatform, buil
 - Multiplatform SavedStateConfiguration helper for polymorphic route registration.
 - Deterministic stack operations and common unit tests.
 
+## Sample application
+
+A runnable Compose Desktop sample demonstrates serializable routes, graph registration, the Navigation 3 host, typed route arguments, and controller-based back navigation.
+
+Run it from the repository root:
+
+```bash
+gradle :sample:run
+```
+
 ## Build
-The CI workflow installs Gradle 9.3.0 and runs the Desktop target tests. A Gradle wrapper will be added once the version baseline is finalized.
+The CI workflow installs Gradle 9.3.0, compiles the sample app, and runs the library's Desktop target tests. It also compiles Android, Desktop, WasmJs, iosArm64, iosSimulatorArm64, and iosX64. A Gradle wrapper will be added once the version baseline is finalized.
 
 ## Status
-Early development. Navigation 3 adapter and dependency compatibility must be validated on all targets before a stable release.
+Early development. Public APIs and platform behavior are still being validated; host-level process recreation coverage remains planned.

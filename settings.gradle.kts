@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "EasyNiddle-KMP"
-include(":easyniddle")
+include(":easyniddle", ":sample")
