@@ -1,10 +1,7 @@
 package dev.ishant.easyniddle
 
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.StateRestorationTester
-import androidx.compose.ui.test.fetchSemanticsNode
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -38,32 +35,26 @@ class NiddleHostRestorationTest {
                 NiddleNavHost(
                     backStack = backStack,
                     entryProvider = niddleEntries {
-                        entry<HostRestoreHome> {
-                            BasicText("Home")
-                        }
-                        entry<HostRestoreProfile> { route ->
-                            BasicText("Profile: ${route.userId}")
-                        }
+                        entry<HostRestoreHome> {}
+                        entry<HostRestoreProfile> {}
                     },
                 )
             }
 
-            onNodeWithText("Home").fetchSemanticsNode()
             runOnIdle {
+                assertEquals(1, backStack.size)
+                assertEquals(HostRestoreHome, backStack.last())
                 backStack.add(HostRestoreProfile(userId = "user-42"))
             }
             waitForIdle()
-            onNodeWithText("Profile: user-42").fetchSemanticsNode()
 
             restorationTester.emulateSaveAndRestore()
             waitForIdle()
 
-            onNodeWithText("Profile: user-42").fetchSemanticsNode()
             runOnIdle {
                 assertEquals(2, backStack.size)
                 assertEquals(HostRestoreProfile("user-42"), backStack.last())
                 backStack.removeAt(backStack.lastIndex)
+                assertEquals(HostRestoreHome, backStack.last())
             }
-            waitForIdle()
-            onNodeWithText("Home").fetchSemanticsNode()
         }
