@@ -32,8 +32,6 @@ Navigation 3 owns the actual save/restore mechanism. Keep route arguments serial
 
 ## 3. Describe the graph
 
-Use the reified destination<Route>() API so route registration stays readable.
-
     val appGraph = niddleGraph(startDestination = HomeRoute) {
         destination<HomeRoute>()
         destination<ProfileRoute>()
@@ -43,7 +41,7 @@ Use the reified destination<Route>() API so route registration stays readable.
         }
     }
 
-A graph validates that each route type is registered once and that each graph's start route belongs to that graph. Nested graphs make feature boundaries visible in one place.
+A graph validates that each route type is registered once and that each graph's start route belongs to that graph.
 
 ## 4. Register UI and host navigation
 
@@ -65,7 +63,21 @@ A graph validates that each route type is registered once and that each graph's 
 
 The graph-aware niddleEntries(appGraph) overload rejects unregistered routes before asking Navigation 3 to resolve their UI.
 
-## 5. Use named navigation operations
+## 5. Configure transitions and predictive back
+
+The host provides sensible horizontal push/pop transitions and a predictive-back fade by default. Navigation 3 owns the gesture lifecycle and drives the predictive transform interactively.
+
+    NiddleNavHost(
+        backStack = backStack,
+        entryProvider = entries,
+        transitionSpec = niddleSlideInTransition,
+        popTransitionSpec = niddleSlidePopTransition,
+        predictivePopTransitionSpec = niddlePredictiveFadeTransition,
+    )
+
+You can supply your own Compose Animation transition lambdas for all three directions. The predictive lambda receives the swipe edge from Navigation 3; it should return a transform rather than manually modifying the back stack.
+
+## 6. Use named navigation operations
 
     val navigator = NiddleController(backStack)
 
@@ -76,9 +88,7 @@ The graph-aware niddleEntries(appGraph) overload rejects unregistered routes bef
 
 The controller is a small convenience facade over the same Navigation 3 back stack—not a second navigation engine.
 
-## 6. Resolve incoming deep links
-
-Register URL patterns once and map each match to your own serializable route type.
+## 7. Resolve incoming deep links
 
     val deepLinks = niddleDeepLinks {
         deepLink("https://example.com/users/{userId}") { match ->
@@ -86,35 +96,21 @@ Register URL patterns once and map each match to your own serializable route typ
         }
     }
 
-    // Call this from your platform entry point after receiving the URL.
     val route = deepLinks.requireResolve(incomingUrl)
     backStack.add(route)
 
-Query values are available through match.queryParameter("source"), and encoded path/query values are decoded. Static paths take priority over parameterized paths. If two matching patterns have equal priority, resolution fails with an ambiguity error instead of silently choosing one.
-
 EasyNiddle resolves the URL into a route; platform-specific app-link registration and receiving the URL remain the host application's responsibility.
 
-## 7. Exchange one-shot destination results
-
-Create typed keys once and reuse the same key instance on both destinations. Keep one result store per navigation host/scope.
+## 8. Exchange one-shot destination results
 
     object AppResultKeys {
         val selectedUser = NiddleResultKey<String>("selected-user")
     }
 
     val results = NiddleResultStore()
-
-    // In the destination that opens the picker:
-    navigator.navigate(UserPickerRoute)
-
-    // In UserPickerRoute after the user selects a user:
     results.set(AppResultKeys.selectedUser, selectedUserId)
     navigator.back()
 
-    // In the previous destination when it resumes or is otherwise notified:
-    val selectedUserId: String? =
-        results.consume(AppResultKeys.selectedUser)
+    val selectedUserId: String? = results.consume(AppResultKeys.selectedUser)
 
-A result is removed when consumed, so it can be delivered only once. Calling set again for the same key replaces its pending value. Keys are identity-based: do not recreate a key with the same name in another destination; share the same key property instead.
-
-The store is in-memory and scoped to your navigation flow. It is not saved across process death and should not replace a database or persistent state holder. Read and write it on the UI/navigation thread.
+A result is removed when consumed, so it can be delivered only once. The store is in-memory and scoped to your navigation flow; it is not saved across process death.

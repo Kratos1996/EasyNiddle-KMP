@@ -19,8 +19,8 @@
 - [x] Deep-link URL pattern matching and typed route resolution
 - [x] Polymorphic route serializer registration helper
 - [x] Common route-stack serialization round-trip tests
+- [x] Configurable push, pop, and predictive-back transition specs
 - [ ] Host-level process recreation tests on Android and iOS
-- [ ] Predictive back and custom transitions
 
 ## Production
 - [ ] Android/iOS/Desktop/WasmJs CI matrix
