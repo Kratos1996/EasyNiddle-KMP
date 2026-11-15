@@ -24,8 +24,9 @@ A developer-friendly, type-safe navigation layer for Compose Multiplatform, buil
 - Per-host navigation controller convenience API.
 - Independent, snapshot-aware bottom-navigation stacks.
 - Typed one-shot destination results.
-- Common deep-link pattern matching with typed route resolution.
-- Deterministic stack operations with common unit tests.
+- Multiplatform deep-link pattern matching with typed route resolution.
+- Multiplatform SavedStateConfiguration helper for polymorphic route registration.
+- Deterministic stack operations and common unit tests.
 
 ## Build
 The CI workflow installs Gradle 9.3.0 and runs the Desktop target tests. A Gradle wrapper will be added once the version baseline is finalized.

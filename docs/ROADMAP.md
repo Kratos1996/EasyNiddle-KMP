@@ -16,8 +16,10 @@
 - [x] Reified route registration for readable graph declarations
 - [x] Graph-aware entry provider with unknown-route validation
 - [x] Typed one-shot destination results
-- [ ] Deep links
-- [ ] State restoration tests on supported platforms
+- [x] Deep-link URL pattern matching and typed route resolution
+- [x] Polymorphic route serializer registration helper
+- [x] Common route-stack serialization round-trip tests
+- [ ] Host-level process recreation tests on Android and iOS
 - [ ] Predictive back and custom transitions
 
 ## Production

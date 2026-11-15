@@ -21,10 +21,12 @@ EasyNiddle gives each piece a clear API. Navigation 3 remains responsible for re
 | niddleGraph { } | Declares route ownership and nested feature boundaries |
 | niddleEntries(graph) { } | Registers UI using Navigation 3's official entry DSL and validates route ownership |
 | rememberNiddleBackStack() | Creates Navigation 3's saveable back stack |
+| niddleSavedStateConfiguration { } | Registers polymorphic route serializers for multiplatform state restoration |
 | NiddleNavHost() | Displays the current stack through Navigation 3 |
 | NiddleController | Readable push, back, single-top, replace, and pop-to operations |
 | NiddleMultiStack | Independent histories for bottom-navigation tabs |
 | NiddleResultKey / NiddleResultStore | Typed, one-shot in-memory results between destinations |
+| niddleDeepLinks { } | Maps incoming URL patterns to app-owned route keys |
 
 ## Graph and entry registration
 
@@ -33,6 +35,33 @@ A graph is immutable after creation. Each graph owns its own start destination. 
 The graph-aware entry-provider overload checks route ownership before resolving an entry. This catches forgotten registrations close to the source of the problem. The plain niddleEntries { } overload remains available when an app intentionally manages route registration elsewhere.
 
 Graph metadata does not replace Navigation 3's entry provider. UI registration still uses the official entry<Route> DSL, so Navigation 3 remains the source of truth for rendering.
+
+## State restoration
+
+Navigation 3's rememberNavBackStack is the persistence owner. EasyNiddle provides niddleSavedStateConfiguration { } to make the required polymorphic NavKey registrations easy to declare in common code.
+
+- Every concrete route type that may appear in the stack must be @Serializable and registered with route(YourRoute.serializer()).
+- Route arguments should be stable, serializable values such as IDs, strings, numbers, and enums.
+- Do not put UI objects, ViewModels, platform contexts, or large domain objects in route keys.
+- The configured back stack is designed to survive supported configuration changes and process recreation through Navigation 3's saveable state mechanism.
+- Common tests verify polymorphic route-stack serialization round trips. Actual host lifecycle restoration should also be exercised in Android/iOS app integration tests because the saveable state registry is provided by the host Compose runtime.
+
+The helper rejects duplicate serializer names early, before a host starts navigating.
+
+## Deep links
+
+NiddleDeepLinkRegistry maps incoming URLs to route objects without depending on Android intents, UIKit, browser APIs, or platform URI classes.
+
+- Register a pattern with deepLink("https://example.com/users/{userId}") { ... }.
+- Placeholders must occupy a complete path segment and must have unique names.
+- Path and query values are percent-decoded; query '+' is treated as a space.
+- Scheme and authority matching are case-insensitive; path matching is case-sensitive.
+- Static path segments take priority over placeholders.
+- Equal-priority overlapping patterns fail as ambiguous instead of relying on registration order.
+- resolve(url) returns null for an unknown URL; requireResolve(url) throws a readable error.
+- The host app still registers OS/browser URL handlers and passes received URLs to the registry.
+
+This keeps URL parsing common and testable while leaving platform lifecycle integration to the app.
 
 ## Destination results
 
