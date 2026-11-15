@@ -58,3 +58,4 @@ class NiddleHostRestorationTest {
                 assertEquals(HostRestoreHome, backStack.last())
             }
         }
+}
