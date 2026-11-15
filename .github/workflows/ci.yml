@@ -40,7 +40,7 @@ jobs:
       - name: Compile Android, Desktop, and WasmJs
         run: >-
           gradle
-          :easyniddle:compileKotlinAndroid
+          :easyniddle:compileDebugKotlinAndroid
           :easyniddle:compileKotlinDesktop
           :easyniddle:compileKotlinWasmJs
 
