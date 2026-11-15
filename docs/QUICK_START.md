@@ -1,25 +1,40 @@
 # Quick start (early API)
 
-Define serializable routes:
+## 1. Define serializable routes
 
 ```kotlin
-@Serializable data object HomeKey : NiddleRoute
-@Serializable data class ProfileKey(val userId: String) : NiddleRoute
+@Serializable
+data object HomeKey : NiddleRoute
+
+@Serializable
+data class ProfileKey(val userId: String) : NiddleRoute
 ```
 
-Register all route serializers in a multiplatform `SavedStateConfiguration` using a `SerializersModule` and the Navigation 3 saved-state integration. Then define entries:
+## 2. Register route serializers
+
+Create a `SavedStateConfiguration` from `androidx.savedstate.serialization` and register all concrete route serializers in its `SerializersModule`. This explicit registration is required for multiplatform restoration.
+
+## 3. Create a back stack and entries
 
 ```kotlin
+val backStack = rememberNiddleBackStack(
+    savedStateConfiguration = appSavedStateConfiguration,
+    startDestination = HomeKey,
+)
+
 val entries = niddleEntries {
-    entry<HomeKey> { HomeScreen() }
-    entry<ProfileKey> { key -> ProfileScreen(key.userId) }
+    entry<HomeKey> {
+        HomeScreen(onOpenProfile = { backStack.add(ProfileKey("42")) })
+    }
+    entry<ProfileKey> { key ->
+        ProfileScreen(userId = key.userId)
+    }
 }
 
 NiddleNavHost(
-    startDestination = HomeKey,
-    savedStateConfiguration = appSavedStateConfiguration,
+    backStack = backStack,
     entryProvider = entries,
 )
 ```
 
-This API is an early adapter. Compile against the resolved JetBrains Navigation 3 KMP artifact and validate all targets before using it in a production release.
+The app owns the stack, making navigation explicit and testable. The `NiddleController(backStack)` facade offers common push, back, pop-to, single-top, and replace operations.
