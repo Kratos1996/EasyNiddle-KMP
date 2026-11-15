@@ -19,43 +19,54 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 
-/**
- * Transition used when a destination is pushed onto the back stack.
- */
+/** Compose transition applied when a destination is pushed onto the back stack. */
 public typealias NiddleTransitionSpec =
     AnimatedContentTransitionScope<Scene<NavKey>>.() -> ContentTransform
 
-/**
- * Transition used when a destination is popped, including a predictive-back gesture.
- */
+/** Compose transition applied during pop and predictive-back navigation. */
 public typealias NiddlePredictivePopTransitionSpec =
     AnimatedContentTransitionScope<Scene<NavKey>>.(swipeEdge: Int) -> ContentTransform
 
+/**
+ * Entry lookup function consumed by [NiddleNavHost].
+ *
+ * Usually create this with [niddleEntries] so destinations are registered using
+ * Navigation 3's official entry-provider DSL.
+ */
 public typealias NiddleEntryProvider = (NavKey) -> NavEntry<NavKey>
 
-/**
- * A balanced horizontal transition for forward navigation.
- */
+/** A balanced horizontal push transition with a subtle fade. */
 public val niddleSlideInTransition: NiddleTransitionSpec = {
     slideInHorizontally { width -> width / 4 } + fadeIn() togetherWith
         slideOutHorizontally { width -> -width / 6 } + fadeOut()
 }
 
-/**
- * A balanced horizontal transition for back navigation.
- */
+/** A balanced horizontal pop transition with a subtle fade. */
 public val niddleSlidePopTransition: NiddleTransitionSpec = {
     slideInHorizontally { width -> -width / 6 } + fadeIn() togetherWith
         slideOutHorizontally { width -> width / 4 } + fadeOut()
 }
 
 /**
- * A fade transition that can be driven interactively by Navigation 3 predictive back.
+ * Fade transition suitable for Navigation 3 predictive-back rendering.
+ *
+ * Navigation 3 drives the gesture lifecycle; this lambda only defines the
+ * visual transform.
  */
 public val niddlePredictiveFadeTransition: NiddlePredictivePopTransitionSpec = { _ ->
     fadeIn() togetherWith fadeOut()
 }
 
+/**
+ * Remembers a saveable Navigation 3 back stack for this Compose host.
+ *
+ * Every concrete route that can enter the stack must have a serializer
+ * registered in [savedStateConfiguration]. The stack remains owned by the
+ * caller and can be passed to [NiddleController] and [NiddleNavHost].
+ *
+ * @param savedStateConfiguration polymorphic route serializer configuration.
+ * @param startDestination initial route shown when no saved stack is restored.
+ */
 @Composable
 public fun rememberNiddleBackStack(
     savedStateConfiguration: SavedStateConfiguration,
@@ -63,10 +74,18 @@ public fun rememberNiddleBackStack(
 ): NavBackStack<NavKey> = rememberNavBackStack(savedStateConfiguration, startDestination)
 
 /**
- * Navigation 3 host with configurable push, pop, and predictive-back transitions.
+ * Displays a caller-owned Navigation 3 stack.
  *
- * Predictive back gesture progress and completion are handled by Navigation 3. The supplied
- * [predictivePopTransitionSpec] defines the visual transform used during that gesture.
+ * Navigation 3 remains responsible for entry rendering, saveable entry state,
+ * transitions, and predictive-back gesture handling. If [onBack] is null, the
+ * host removes the top entry when the stack contains more than its root.
+ *
+ * @param backStack saveable Navigation 3 stack created or managed by the app.
+ * @param entryProvider maps route keys to their UI entries.
+ * @param onBack optional app-specific back action; null uses the default pop.
+ * @param transitionSpec visual transform for forward navigation.
+ * @param popTransitionSpec visual transform for ordinary pop navigation.
+ * @param predictivePopTransitionSpec visual transform for predictive back.
  */
 @Composable
 public fun NiddleNavHost(
@@ -90,14 +109,22 @@ public fun NiddleNavHost(
     )
 }
 
-/** Builds entries using Navigation 3's official entry-provider DSL. */
+/**
+ * Builds an entry provider using Navigation 3's official DSL.
+ *
+ * Use this overload when route ownership is validated elsewhere or the app
+ * intentionally does not maintain a [NiddleGraph].
+ */
 public fun niddleEntries(
     builder: EntryProviderScope<NavKey>.() -> Unit,
 ): NiddleEntryProvider = entryProvider(builder = builder)
 
 /**
- * Builds entries and checks that every requested route belongs to [graph].
- * Unknown route types fail immediately with a clear registration error.
+ * Builds an entry provider and validates that every requested route belongs
+ * to [graph]. Unknown route types fail before Navigation 3 resolves an entry.
+ *
+ * @param graph immutable graph containing all routes that this provider serves.
+ * @param builder Navigation 3 entry declarations for those routes.
  */
 public fun niddleEntries(
     graph: NiddleGraph,
