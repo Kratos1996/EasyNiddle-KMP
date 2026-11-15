@@ -37,8 +37,9 @@ kotlin {
             implementation("org.jetbrains.compose.runtime:runtime:1.10.3")
             implementation("org.jetbrains.compose.ui:ui:1.10.3")
             implementation(libs.kotlinx.serialization.json)
-            // Navigation 3 KMP's UI artifact brings its matching runtime transitively.
-            implementation(libs.navigation3.ui)
+            // NiddleRoute publicly extends Navigation 3's NavKey, so consumers
+            // must receive the Navigation 3 runtime on their compile classpath.
+            api(libs.navigation3.ui)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
