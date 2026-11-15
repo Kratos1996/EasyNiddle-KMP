@@ -28,6 +28,7 @@ public class NiddleSerializersModuleBuilder internal constructor() {
     }
 
     /** Registers a route serializer when its route class is only available as a value. */
+    /** Registers [serializer] for [routeClass] in the polymorphic NavKey module. */
     public fun <Route : NavKey> route(
         routeClass: KClass<Route>,
         serializer: KSerializer<Route>,
@@ -52,9 +53,9 @@ public class NiddleSerializersModuleBuilder internal constructor() {
  * Creates a [SavedStateConfiguration] with explicit polymorphic serializers for
  * all app-owned [NavKey] route types.
  *
- * Pass the result to [rememberNiddleBackStack]. Navigation 3 uses this
- * configuration to save and restore the back stack across supported lifecycle
- * and process recreation events.
+ * Pass the result to [rememberNiddleBackStack]. Register every concrete route
+ * type that may enter the back stack. Actual host lifecycle restoration should
+ * also be verified in app integration tests on each shipped platform.
  */
 public fun niddleSavedStateConfiguration(
     builder: NiddleSerializersModuleBuilder.() -> Unit,
