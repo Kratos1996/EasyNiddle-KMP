@@ -11,6 +11,9 @@
 - [x] Verify Android/iOS/Desktop/WasmJs target compilation in CI
 
 ## Navigation API
+- [x] Legacy EasyNiddle route marker and command-based navigator facade
+- [x] One-call screen DSL host and CompositionLocal navigator access
+- [x] Pop-up-to, single-top, back, finish callback and destination-result bridge
 - [x] Typed route graph metadata and duplicate-route diagnostics
 - [x] Nested graph ownership and start-destination validation
 - [x] Reified route registration for readable graph declarations
@@ -29,5 +32,6 @@
 - [x] Minified Android consumer verification with R8
 - [x] Public API KDoc
 - [x] Quick start, architecture, migration guide, and cookbook
+- [x] Original EasyNiddle-style README and creator credits
 - [ ] Gradle Wrapper bootstrap and committed wrapper files
 - [ ] Maven Central publishing and signed releases

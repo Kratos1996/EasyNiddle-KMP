@@ -2,7 +2,6 @@ package dev.ishant.easyniddle
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -22,7 +21,6 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import kotlinx.coroutines.flow.MutableSharedFlow
 
 /** Compose transition applied when a destination is pushed onto the back stack. */
 public typealias NiddleTransitionSpec =
@@ -98,10 +96,10 @@ public fun NiddleNavHost(
  * }
  * ```
  *
- * Every route type that can be pushed must be included in [savedStateConfiguration].
- * When omitted, a configuration is created for the supplied start route only.
- * For route arguments, multiple destinations, and process restoration, pass an
- * explicit configuration that registers every concrete route serializer.
+ * Provide [savedStateConfiguration] for the route family. For a sealed
+ * `@Serializable` route interface, one `route(AppRoute.serializer())`
+ * registration covers its annotated subtypes. For unrelated route classes,
+ * register each concrete serializer separately.
  *
  * @param startDestination initial route when no saved stack is restored.
  * @param navigator command facade; defaults to a host-scoped remembered instance.
@@ -111,20 +109,18 @@ public fun NiddleNavHost(
  * @param onResult receives one-shot results emitted by [NiddleNavigator.navigateBackWithResult].
  */
 @Composable
-public inline fun <reified Route : NiddleRoute> NiddleNavHost(
+public fun <Route : NiddleRoute> NiddleNavHost(
     startDestination: Route,
     navigator: NiddleNavigator = remember { NiddleNavigator() },
-    savedStateConfiguration: SavedStateConfiguration = niddleSavedStateConfiguration {
-        registerDefaultNiddleRoute(startDestination)
-    },
-    noinline onBack: () -> Unit = {},
-    noinline onFinish: () -> Unit = {},
-    noinline onNavigateCustom: (Route) -> Unit = {},
-    noinline onResult: (Any) -> Unit = {},
+    savedStateConfiguration: SavedStateConfiguration,
+    onBack: () -> Unit = {},
+    onFinish: () -> Unit = {},
+    onNavigateCustom: (Route) -> Unit = {},
+    onResult: (Any) -> Unit = {},
     transitionSpec: NiddleTransitionSpec = niddleSlideInTransition,
     popTransitionSpec: NiddleTransitionSpec = niddleSlidePopTransition,
     predictivePopTransitionSpec: NiddlePredictivePopTransitionSpec = niddlePredictiveFadeTransition,
-    noinline builder: NiddleNavGraphBuilder<Route>.() -> Unit,
+    builder: NiddleNavGraphBuilder<Route>.() -> Unit,
 ) {
     val backStack = rememberNiddleBackStack(
         savedStateConfiguration = savedStateConfiguration,
@@ -134,7 +130,6 @@ public inline fun <reified Route : NiddleRoute> NiddleNavHost(
         @Suppress("UNCHECKED_CAST")
         NiddleNavGraphBuilder<Route>().apply(builder).build() as (NavKey) -> NavEntry<NavKey>
     }
-    val resultEvents = remember { MutableSharedFlow<Any>(extraBufferCapacity = 16) }
 
     LaunchedEffect(navigator, backStack) {
         navigator.collectEvents { event ->
@@ -162,7 +157,8 @@ public inline fun <reified Route : NiddleRoute> NiddleNavHost(
                 is NiddleNavigationEvent.PopTo -> popStackTo(backStack, event.route, event.inclusive)
                 NiddleNavigationEvent.Finish -> onFinish()
                 is NiddleNavigationEvent.BackWithResult -> {
-                    resultEvents.emit(event.result)
+                    navigator.emitResult(event.result)
+                    onResult(event.result)
                     if (backStack.size > 1) backStack.removeAt(backStack.lastIndex) else onBack()
                 }
                 is NiddleNavigationEvent.Custom -> {
@@ -173,9 +169,6 @@ public inline fun <reified Route : NiddleRoute> NiddleNavHost(
         }
     }
 
-    LaunchedEffect(resultEvents, onResult) {
-        resultEvents.collect(onResult)
-    }
 
     CompositionLocalProvider(LocalNiddleNavigator provides navigator) {
         NiddleNavHost(
@@ -220,8 +213,3 @@ private fun popStackTo(
     while (backStack.size > targetSize) backStack.removeAt(backStack.lastIndex)
 }
 
-@PublishedApi
-internal fun <Route : NavKey> NiddleSerializersModuleBuilder.registerDefaultNiddleRoute(route: Route) {
-    // The generated serializer is not available from an arbitrary NavKey.
-    // Therefore this hook intentionally does not infer serializers.
-}

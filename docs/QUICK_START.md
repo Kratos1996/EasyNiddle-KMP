@@ -1,116 +1,166 @@
 # Quick start
 
-EasyNiddle keeps navigation explicit: define serializable routes, describe the graph, register UI entries, then host the Navigation 3 back stack.
+EasyNiddle has two usage styles. Start with the compact compatibility DSL for a typical app. Use the lower-level API when you need complete ownership of the back stack and graph.
 
-## 1. Define routes
+## 1. Define serializable routes
 
-    @Serializable
-    data object HomeRoute : NiddleRoute
+A sealed route family is the simplest pattern. The original Android name `SerializableRoute` is available as a multiplatform marker; it uses kotlinx.serialization, not Java serialization.
 
-    @Serializable
-    data class ProfileRoute(val userId: String) : NiddleRoute
+```kotlin
+@Serializable
+sealed interface AppRoute : SerializableRoute {
+    @Serializable data object Home : AppRoute
+    @Serializable data class Profile(val userId: String) : AppRoute
+    @Serializable data object Settings : AppRoute
+}
+```
 
-    @Serializable
-    data object SettingsRoute : NiddleRoute
+## 2. Register state serializers once
 
-## 2. Configure multiplatform state restoration
+For a sealed route interface/class, register its generated serializer. Its annotated sealed subtypes are handled by that serializer.
 
-Register every concrete route type that may enter this host's back stack. The helper creates the polymorphic SavedStateConfiguration required by Navigation 3 on iOS, Desktop, and Wasm as well as Android.
+```kotlin
+val appState = niddleSavedStateConfiguration {
+    route(AppRoute.serializer())
+}
+```
 
-    val appSavedStateConfiguration = niddleSavedStateConfiguration {
-        route(HomeRoute.serializer())
-        route(ProfileRoute.serializer())
-        route(SettingsRoute.serializer())
-    }
+For unrelated route classes, register each concrete serializer separately.
 
-    val backStack = rememberNiddleBackStack(
-        savedStateConfiguration = appSavedStateConfiguration,
-        startDestination = HomeRoute,
-    )
+## 3. Use the simple host and screen DSL
 
-Navigation 3 owns the actual save/restore mechanism. Keep route arguments serializable and stable; avoid storing screens, ViewModels, contexts, or other runtime objects in route keys.
+```kotlin
+@Composable
+fun AppNavigation() {
+    val navigator = remember { NiddleNavigator() }
 
-## 3. Describe the graph
-
-    val appGraph = niddleGraph(startDestination = HomeRoute) {
-        destination<HomeRoute>()
-        destination<ProfileRoute>()
-
-        nestedGraph(startDestination = SettingsRoute) {
-            destination<SettingsRoute>()
+    NiddleNavHost<AppRoute>(
+        startDestination = AppRoute.Home,
+        navigator = navigator,
+        savedStateConfiguration = appState,
+    ) {
+        screen<AppRoute.Home> {
+            val nav = LocalNiddleNavigator.current
+            HomeScreen(
+                onProfileClick = { nav.navigate(AppRoute.Profile("42")) },
+                onSettingsClick = { nav.navigate(AppRoute.Settings) },
+            )
         }
-    }
 
-A graph validates that each route type is registered once and that each graph's start route belongs to that graph.
-
-## 4. Register UI and host navigation
-
-    val entries = niddleEntries(appGraph) {
-        entry<HomeRoute> {
-            HomeScreen(onOpenProfile = {
-                backStack.add(ProfileRoute("42"))
-            })
-        }
-        entry<ProfileRoute> { route ->
+        screen<AppRoute.Profile> { route ->
             ProfileScreen(userId = route.userId)
         }
-        entry<SettingsRoute> {
+
+        screen<AppRoute.Settings> {
             SettingsScreen()
         }
     }
+}
+```
 
-    NiddleNavHost(backStack = backStack, entryProvider = entries)
+The same navigator instance can be provided by Hilt, Koin or your own DI setup. When omitted, the host remembers a navigator for that host.
 
-The graph-aware niddleEntries(appGraph) overload rejects unregistered routes before asking Navigation 3 to resolve their UI.
+## 4. Navigate from any child composable
 
-## 5. Configure transitions and predictive back
+```kotlin
+val navigator = LocalNiddleNavigator.current
 
-The host provides sensible horizontal push/pop transitions and a predictive-back fade by default. Navigation 3 owns the gesture lifecycle and drives the predictive transform interactively.
+navigator.navigate(AppRoute.Profile("42"))
+navigator.pop()
+navigator.popTo(AppRoute.Home)
+navigator.popTo(AppRoute.Home, inclusive = true)
+navigator.navigateSingleTop(AppRoute.Home)
+navigator.navigate(AppRoute.Settings, popUpTo = AppRoute.Home, inclusive = false)
+```
 
-    NiddleNavHost(
-        backStack = backStack,
-        entryProvider = entries,
-        transitionSpec = niddleSlideInTransition,
-        popTransitionSpec = niddleSlidePopTransition,
-        predictivePopTransitionSpec = niddlePredictiveFadeTransition,
-    )
+`navigateSingleTop` returns to the last matching route if one exists; otherwise it adds the route. `popTo` preserves the root and does not empty the stack.
 
-You can supply your own Compose Animation transition lambdas for all three directions. The predictive lambda receives the swipe edge from Navigation 3; it should return a transform rather than manually modifying the back stack.
+## 5. Receive a result
 
-## 6. Use named navigation operations
+Collect the same navigator's result stream:
 
-    val navigator = NiddleController(backStack)
+```kotlin
+val result by navigator.navigationResult.collectAsState(initial = null)
+```
 
-    navigator.navigate(ProfileRoute("42"))
-    navigator.navigateSingleTop(SettingsRoute)
-    navigator.back()
-    navigator.popTo(HomeRoute)
+From the result destination:
 
-The controller is a small convenience facade over the same Navigation 3 back stack—not a second navigation engine.
+```kotlin
+LocalNiddleNavigator.current.navigateBackWithResult("Saved successfully")
+```
 
-## 7. Resolve incoming deep links
+You can also use the host's `onResult` callback. Results are in-memory and are not restored after process death.
 
-    val deepLinks = niddleDeepLinks {
-        deepLink("https://example.com/users/{userId}") { match ->
-            ProfileRoute(match.pathParameter("userId"))
-        }
+## 6. Handle platform finish and custom navigation
+
+The common API does not import Android `Activity` or `Context`. Supply the platform behavior from the host:
+
+```kotlin
+NiddleNavHost<AppRoute>(
+    startDestination = AppRoute.Home,
+    navigator = navigator,
+    savedStateConfiguration = appState,
+    onFinish = { /* close the current platform window/activity */ },
+    onNavigateCustom = { route -> /* app-specific handling */ },
+) {
+    // screen declarations
+}
+```
+
+## 7. Use the advanced Navigation 3 API when needed
+
+You can still own the back stack directly and use graph validation:
+
+```kotlin
+val backStack = rememberNiddleBackStack(appState, AppRoute.Home)
+val controller = NiddleController(backStack)
+
+val graph = niddleGraph(startDestination = AppRoute.Home) {
+    destination<AppRoute.Home>()
+    destination<AppRoute.Profile>()
+    destination<AppRoute.Settings>()
+}
+
+val entries = niddleEntries(graph) {
+    entry<AppRoute.Home> { HomeScreen() }
+    entry<AppRoute.Profile> { route -> ProfileScreen(route.userId) }
+    entry<AppRoute.Settings> { SettingsScreen() }
+}
+
+NiddleNavHost(backStack = backStack, entryProvider = entries)
+```
+
+## 8. Custom transitions
+
+```kotlin
+NiddleNavHost(
+    backStack = backStack,
+    entryProvider = entries,
+    transitionSpec = niddleSlideInTransition,
+    popTransitionSpec = niddleSlidePopTransition,
+    predictivePopTransitionSpec = niddlePredictiveFadeTransition,
+)
+```
+
+Navigation 3 controls the predictive-back gesture; the lambda describes the transition visuals.
+
+## 9. Deep links
+
+```kotlin
+val deepLinks = niddleDeepLinks {
+    deepLink("https://example.com/users/{userId}") { match ->
+        AppRoute.Profile(match.pathParameter("userId"))
     }
+}
 
-    val route = deepLinks.requireResolve(incomingUrl)
-    backStack.add(route)
+val route = deepLinks.requireResolve(incomingUrl)
+backStack.add(route)
+```
 
-EasyNiddle resolves the URL into a route; platform-specific app-link registration and receiving the URL remain the host application's responsibility.
+Android App Links, iOS Universal Links and browser URL receiving remain the host app's responsibility.
 
-## 8. Exchange one-shot destination results
+## 10. Independent bottom-tab histories
 
-    object AppResultKeys {
-        val selectedUser = NiddleResultKey<String>("selected-user")
-    }
+Use `NiddleMultiStack` when each bottom-navigation tab should retain its own history. `NiddleNavigator.navigateBottomBar` is a simpler root-retaining convenience command, not a replacement for independent tab stacks.
 
-    val results = NiddleResultStore()
-    results.set(AppResultKeys.selectedUser, selectedUserId)
-    navigator.back()
-
-    val selectedUserId: String? = results.consume(AppResultKeys.selectedUser)
-
-A result is removed when consumed, so it can be delivered only once. The store is in-memory and scoped to your navigation flow; it is not saved across process death.
+See [Cookbook](COOKBOOK.md) for more recipes.
