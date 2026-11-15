@@ -14,6 +14,9 @@ kotlin {
     }
     iosArm64()
     iosSimulatorArm64()
+    // Retained for Intel-based iOS simulator environments. This requires the
+    // Compose Multiplatform 1.10.x dependency line (1.11.1+ dropped iosX64).
+    iosX64()
     jvm("desktop")
     wasmJs {
         browser()

@@ -1,8 +1,10 @@
 [versions]
 kotlin = "2.3.20"
 agp = "9.0.0"
-compose-multiplatform = "1.12.1"
-navigation3-kmp = "1.1.2"
+# Compose 1.10.3 is the last stable line before iosX64 support was removed.
+compose-multiplatform = "1.10.3"
+# Keep Navigation 3 aligned with the Compose 1.10.3 multiplatform release.
+navigation3-kmp = "1.0.0-alpha06"
 kotlinx-serialization = "1.10.0"
 
 [plugins]
