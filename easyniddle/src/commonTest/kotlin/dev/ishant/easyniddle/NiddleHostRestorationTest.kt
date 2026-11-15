@@ -1,6 +1,6 @@
 package dev.ishant.easyniddle
 
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.StateRestorationTester
 import androidx.compose.ui.test.assertExists
@@ -40,10 +40,10 @@ class NiddleHostRestorationTest {
                     backStack = backStack,
                     entryProvider = niddleEntries {
                         entry<HostRestoreHome> {
-                            Text("Home")
+                            BasicText("Home")
                         }
                         entry<HostRestoreProfile> { route ->
-                            Text("Profile: ${route.userId}")
+                            BasicText("Profile: ${route.userId}")
                         }
                     },
                 )
