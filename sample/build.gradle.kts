@@ -9,7 +9,7 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
-        desktopMain.dependencies {
+        getByName("desktopMain").dependencies {
             implementation(project(":easyniddle"))
             implementation(compose.desktop.currentOs)
             implementation("org.jetbrains.compose.material3:material3:1.10.3")
