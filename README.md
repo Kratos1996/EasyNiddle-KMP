@@ -6,7 +6,7 @@ A developer-friendly, type-safe navigation layer for Compose Multiplatform, buil
 
 ## Targets
 - Android
-- iOS
+- iOS (iosArm64, iosSimulatorArm64, iosX64)
 - Desktop JVM
 - Web (WasmJs)
 
@@ -20,8 +20,11 @@ A developer-friendly, type-safe navigation layer for Compose Multiplatform, buil
 
 ## Current features
 - Navigation 3 host adapter and official entry-provider bridge.
+- Typed route graphs, nested graph ownership, and route registration validation.
 - Per-host navigation controller convenience API.
 - Independent, snapshot-aware bottom-navigation stacks.
+- Typed one-shot destination results.
+- Common deep-link pattern matching with typed route resolution.
 - Deterministic stack operations with common unit tests.
 
 ## Build
