@@ -134,12 +134,12 @@ public fun <Route : NiddleRoute> NiddleNavHost(
     LaunchedEffect(navigator, backStack) {
         navigator.collectEvents { event ->
             when (event) {
-                is NiddleNavigationEvent.Navigate -> backStack.add(event.route)
-                is NiddleNavigationEvent.NavigateWithPopUp -> {
-                    popStackTo(backStack, event.popUpTo, event.inclusive)
+                is Navigator.NavigateRoute -> backStack.add(event.route)
+                is Navigator.NavigateWithPopUp -> {
+                    popStackTo(backStack, event.popUpToRoute, event.inclusive)
                     backStack.add(event.route)
                 }
-                is NiddleNavigationEvent.NavigateSingleTop -> {
+                is Navigator.NavigateToBackstackScreenAsSingleTop -> {
                     val index = backStack.indexOfLast { it == event.route }
                     if (index >= 0) {
                         while (backStack.lastIndex > index) backStack.removeAt(backStack.lastIndex)
@@ -147,21 +147,21 @@ public fun <Route : NiddleRoute> NiddleNavHost(
                         backStack.add(event.route)
                     }
                 }
-                is NiddleNavigationEvent.NavigateBottomBar -> {
+                is Navigator.NavigateBottomBar -> {
                     while (backStack.size > 1) backStack.removeAt(backStack.lastIndex)
                     if (backStack.lastOrNull() != event.route) backStack.add(event.route)
                 }
-                NiddleNavigationEvent.Back -> {
+                Navigator.NavigateBack -> {
                     if (backStack.size > 1) backStack.removeAt(backStack.lastIndex) else onBack()
                 }
-                is NiddleNavigationEvent.PopTo -> popStackTo(backStack, event.route, event.inclusive)
-                NiddleNavigationEvent.Finish -> onFinish()
-                is NiddleNavigationEvent.BackWithResult -> {
+                is Navigator.NavigatePopBackStack -> popStackTo(backStack, event.route, event.inclusive)
+                Navigator.FinishActivity -> onFinish()
+                is Navigator.NavigateBackWithResult -> {
                     navigator.emitResult(event.result)
                     onResult(event.result)
                     if (backStack.size > 1) backStack.removeAt(backStack.lastIndex) else onBack()
                 }
-                is NiddleNavigationEvent.Custom -> {
+                is Navigator.NavigateCustom -> {
                     @Suppress("UNCHECKED_CAST")
                     onNavigateCustom(event.route as Route)
                 }

@@ -39,7 +39,7 @@ public class NiddleNavGraphBuilder<Route : NavKey> {
         }
         providers[routeType] = { route ->
             @Suppress("UNCHECKED_CAST")
-            provider(route as Destination)
+            provider(route as Destination) as NavEntry<Route>
         }
     }
 

@@ -4,6 +4,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collect
 
 /**
  * Command-based navigator compatible with the original EasyNiddle API.
@@ -13,76 +14,66 @@ import kotlinx.coroutines.flow.asSharedFlow
  * that host. It does not own the back stack; the host applies each command.
  */
 public class NiddleNavigator {
-    private val events = MutableSharedFlow<NiddleNavigationEvent>(extraBufferCapacity = 64)
+    private val events = MutableSharedFlow<Navigator>(extraBufferCapacity = 64)
     private val resultEvents = MutableSharedFlow<Any>(extraBufferCapacity = 16)
 
-    /** Navigation commands consumed by [NiddleNavHost]. */
+    /** Public command stream, useful for integrations and tests. */
     public val navEvents = events.asSharedFlow()
 
     /** One-shot results emitted by [navigateBackWithResult]. */
     public val navigationResult = resultEvents.asSharedFlow()
 
     /** Pushes [route] onto the current host's stack. */
-    public fun navigate(route: NavKey) {
-        events.tryEmit(NiddleNavigationEvent.Navigate(route))
+    public fun navigate(route: NiddleRoute) {
+        events.tryEmit(Navigator.NavigateRoute(route))
     }
 
     /** Pops to [popUpTo] and then pushes [route]. */
-    public fun navigate(route: NavKey, popUpTo: NavKey, inclusive: Boolean = false) {
-        events.tryEmit(NiddleNavigationEvent.NavigateWithPopUp(route, popUpTo, inclusive))
+    public fun navigate(route: NiddleRoute, popUpTo: NiddleRoute, inclusive: Boolean = false) {
+        events.tryEmit(Navigator.NavigateWithPopUp(route, popUpTo, inclusive))
     }
 
     /** Returns to an existing [route], removing entries above it, or pushes it if absent. */
-    public fun navigateSingleTop(route: NavKey) {
-        events.tryEmit(NiddleNavigationEvent.NavigateSingleTop(route))
+    public fun navigateSingleTop(route: NiddleRoute) {
+        events.tryEmit(Navigator.NavigateToBackstackScreenAsSingleTop(route))
     }
 
     /** Selects a bottom-bar destination using root-retaining single-top behavior. */
-    public fun navigateBottomBar(route: NavKey) {
-        events.tryEmit(NiddleNavigationEvent.NavigateBottomBar(route))
+    public fun navigateBottomBar(route: NiddleRoute) {
+        events.tryEmit(Navigator.NavigateBottomBar(route))
     }
 
     /** Pops the current destination; the host's onBack callback handles a root request. */
     public fun pop() {
-        events.tryEmit(NiddleNavigationEvent.Back)
+        events.tryEmit(Navigator.NavigateBack)
     }
 
     /** Pops to the last [route] match, optionally removing the match. */
-    public fun popTo(route: NavKey, inclusive: Boolean = false) {
-        events.tryEmit(NiddleNavigationEvent.PopTo(route, inclusive))
+    public fun popTo(route: NiddleRoute, inclusive: Boolean = false) {
+        events.tryEmit(Navigator.NavigatePopBackStack(route, inclusive))
     }
 
     /** Requests the host's platform-specific finish action. */
     public fun finish() {
-        events.tryEmit(NiddleNavigationEvent.Finish)
+        events.tryEmit(Navigator.FinishActivity)
     }
 
     /** Publishes [result] to [navigationResult] and pops the current destination. */
     public fun navigateBackWithResult(result: Any) {
-        events.tryEmit(NiddleNavigationEvent.BackWithResult(result))
+        events.tryEmit(Navigator.NavigateBackWithResult(result))
     }
 
     /** Sends [route] to the host's app-specific custom-navigation callback. */
-    public fun navigateCustom(route: NavKey) {
-        events.tryEmit(NiddleNavigationEvent.Custom(route))
+    public fun navigateCustom(route: NiddleRoute) {
+        events.tryEmit(Navigator.NavigateCustom(route))
     }
 
     /** Accepts command objects used by the original Android EasyNiddle API. */
     public fun navigate(command: Navigator) {
-        when (command) {
-            is Navigator.NavigateRoute -> navigate(command.route)
-            is Navigator.NavigatePopBackStack -> popTo(command.route, command.inclusive)
-            is Navigator.NavigateBottomBar -> navigateBottomBar(command.route)
-            is Navigator.NavigateWithPopUp -> navigate(command.route, command.popUpToRoute, command.inclusive)
-            is Navigator.NavigateToBackstackScreenAsSingleTop -> navigateSingleTop(command.route)
-            Navigator.FinishActivity -> finish()
-            Navigator.NavigateBack -> pop()
-            is Navigator.NavigateBackWithResult -> navigateBackWithResult(command.result)
-            is Navigator.NavigateCustom -> navigateCustom(command.route)
-        }
+        events.tryEmit(command)
     }
 
-    internal suspend fun collectEvents(collector: suspend (NiddleNavigationEvent) -> Unit) {
+    internal suspend fun collectEvents(collector: suspend (Navigator) -> Unit) {
         navEvents.collect(collector)
     }
 
@@ -120,16 +111,4 @@ public sealed interface Navigator {
     public data object NavigateBack : Navigator
     public data class NavigateBackWithResult(val result: Any) : Navigator
     public data class NavigateCustom(val route: NiddleRoute) : Navigator
-}
-
-internal sealed interface NiddleNavigationEvent {
-    data class Navigate(val route: NavKey) : NiddleNavigationEvent
-    data class NavigateWithPopUp(val route: NavKey, val popUpTo: NavKey, val inclusive: Boolean) : NiddleNavigationEvent
-    data class NavigateSingleTop(val route: NavKey) : NiddleNavigationEvent
-    data class NavigateBottomBar(val route: NavKey) : NiddleNavigationEvent
-    data object Back : NiddleNavigationEvent
-    data class PopTo(val route: NavKey, val inclusive: Boolean) : NiddleNavigationEvent
-    data object Finish : NiddleNavigationEvent
-    data class BackWithResult(val result: Any) : NiddleNavigationEvent
-    data class Custom(val route: NavKey) : NiddleNavigationEvent
 }
