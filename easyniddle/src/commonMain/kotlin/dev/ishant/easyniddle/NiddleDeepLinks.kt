@@ -13,11 +13,13 @@ public class NiddleDeepLinkMatch internal constructor(
     public val pathParameters: Map<String, String>,
     public val queryParameters: Map<String, String>,
 ) {
+    /** Returns the decoded required path parameter [name], or throws if it is absent. */
     public fun pathParameter(name: String): String =
         requireNotNull(pathParameters[name]) {
             "Deep link does not contain path parameter '$name'."
         }
 
+    /** Returns the decoded query parameter [name], or null when it is absent. */
     public fun queryParameter(name: String): String? = queryParameters[name]
 }
 
@@ -64,7 +66,11 @@ internal data class DeepLinkDefinition(
 public class NiddleDeepLinkRegistry internal constructor(
     private val definitions: List<DeepLinkDefinition>,
 ) {
-    /** Returns the matching route, or null when no registered pattern matches. */
+    /**
+     * Resolves [uri] to a typed route, or returns null when no pattern matches.
+     * Static segments outrank placeholders; equally specific matches are rejected
+     * as ambiguous rather than depending on registration order.
+     */
     public fun resolve(uri: String): NavKey? {
         val parsed = parseDeepLinkUri(uri) ?: return null
         val matches = definitions.mapNotNull { definition ->
@@ -84,14 +90,14 @@ public class NiddleDeepLinkRegistry internal constructor(
         return bestMatch.second.destination(bestMatch.third)
     }
 
-    /** Resolves a deep link or throws a readable error when no pattern matches. */
+    /** Resolves [uri], throwing [IllegalArgumentException] when no pattern matches. */
     public fun requireResolve(uri: String): NavKey =
         requireNotNull(resolve(uri)) {
             "No Niddle deep-link pattern matches '$uri'."
         }
 }
 
-/** DSL for registering URL patterns and their typed destination factories. */
+/** Mutable DSL receiver used only while constructing a [NiddleDeepLinkRegistry]. */
 public class NiddleDeepLinkBuilder internal constructor() {
     private val definitions = mutableListOf<DeepLinkDefinition>()
 
@@ -149,7 +155,7 @@ public class NiddleDeepLinkBuilder internal constructor() {
         NiddleDeepLinkRegistry(definitions.toList())
 }
 
-/** Builds an immutable deep-link registry. */
+/** Builds an immutable registry from URL patterns and typed destination factories. */
 public fun niddleDeepLinks(
     builder: NiddleDeepLinkBuilder.() -> Unit,
 ): NiddleDeepLinkRegistry {
