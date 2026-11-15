@@ -28,7 +28,6 @@ kotlin {
         commonMain.dependencies {
             implementation("org.jetbrains.compose.runtime:runtime:1.10.3")
             implementation("org.jetbrains.compose.ui:ui:1.10.3")
-            implementation("org.jetbrains.compose.foundation:foundation:1.10.3")
             implementation(libs.kotlinx.serialization.json)
             // Navigation 3 KMP's UI artifact brings its matching runtime transitively.
             implementation(libs.navigation3.ui)
