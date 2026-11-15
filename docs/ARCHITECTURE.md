@@ -24,6 +24,7 @@ EasyNiddle gives each piece a clear API. Navigation 3 remains responsible for re
 | NiddleNavHost() | Displays the current stack through Navigation 3 |
 | NiddleController | Readable push, back, single-top, replace, and pop-to operations |
 | NiddleMultiStack | Independent histories for bottom-navigation tabs |
+| NiddleResultKey / NiddleResultStore | Typed, one-shot in-memory results between destinations |
 
 ## Graph and entry registration
 
@@ -33,10 +34,23 @@ The graph-aware entry-provider overload checks route ownership before resolving 
 
 Graph metadata does not replace Navigation 3's entry provider. UI registration still uses the official entry<Route> DSL, so Navigation 3 remains the source of truth for rendering.
 
+## Destination results
+
+NiddleResultStore provides a small typed hand-off for short-lived results such as a selected user, picked image URI, or confirmation value.
+
+- Define a stable NiddleResultKey<T> and share that exact key instance between destinations.
+- Create one store per navigation host or feature flow; avoid global singleton stores.
+- set(key, value) replaces any still-pending value for that key.
+- consume(key) returns and removes the value, so delivery is one-shot.
+- clear(key) and clearAll() support cancellation and scope cleanup.
+- The store is in-memory, not process-restorable, and intended for UI/navigation-thread access.
+
+This is deliberately not a global event bus, coroutine channel, or persistence layer. Apps remain responsible for deciding when the previous destination checks the result (for example, when it becomes active again).
+
 ## State ownership
 
 - The app owns its route types and serializer configuration.
-- Each host owns its back stack and controller.
+- Each host owns its back stack, controller, and result store.
 - Each bottom-navigation tab owns an independent history through NiddleMultiStack.
 - No global navigator, singleton event bus, or hidden mutable navigation state is introduced.
 

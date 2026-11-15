@@ -15,7 +15,7 @@
 - [x] Nested graph ownership and start-destination validation
 - [x] Reified route registration for readable graph declarations
 - [x] Graph-aware entry provider with unknown-route validation
-- [ ] Typed one-shot destination results
+- [x] Typed one-shot destination results
 - [ ] Deep links
 - [ ] State restoration tests on supported platforms
 - [ ] Predictive back and custom transitions
