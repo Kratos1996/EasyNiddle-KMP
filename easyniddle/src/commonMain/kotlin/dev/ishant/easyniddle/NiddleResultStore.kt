@@ -34,6 +34,7 @@ public class NiddleResultStore {
     private val values: MutableMap<NiddleResultKey<*>, Any> = mutableMapOf()
 
     /** Stores or replaces the pending value associated with [key]. */
+    /** Stores [value] under [key], replacing any pending value for that key. */
     public fun <T : Any> set(key: NiddleResultKey<T>, value: T) {
         values[key] = value
     }
@@ -44,19 +45,23 @@ public class NiddleResultStore {
      * Returns null when no value is waiting. A result can be consumed only once.
      */
     @Suppress("UNCHECKED_CAST")
+    /** Removes and returns the pending value for [key], or null when none exists. */
     public fun <T : Any> consume(key: NiddleResultKey<T>): T? {
         return values.remove(key) as T?
     }
 
     /** Returns whether [key] currently has a pending result. */
+    /** Returns true when [key] has a pending value. */
     public fun hasResult(key: NiddleResultKey<*>): Boolean = values.containsKey(key)
 
     /** Removes a pending result without consuming it. */
+    /** Discards the pending value associated with [key], if present. */
     public fun clear(key: NiddleResultKey<*>) {
         values.remove(key)
     }
 
     /** Removes every pending result in this navigation scope. */
+    /** Discards all pending values in this store. */
     public fun clearAll() {
         values.clear()
     }
