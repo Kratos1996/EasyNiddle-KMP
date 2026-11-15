@@ -5,8 +5,11 @@ on:
     branches: [main, develop]
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
-  abi-baseline:
+  abi-validation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,13 +20,21 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "9.3.0"
-      - name: Generate initial ABI reference dump
-        run: gradle :easyniddle:updateKotlinAbi
-      - uses: actions/upload-artifact@v4
-        with:
-          name: easyniddle-abi-baseline
-          path: easyniddle/api/
-          if-no-files-found: error
+      - name: Check or initialize Kotlin ABI baseline
+        run: |
+          if [ -f easyniddle/api/easyniddle.klib.api ]; then
+            gradle :easyniddle:checkKotlinAbi
+          elif [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            gradle :easyniddle:updateKotlinAbi
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add easyniddle/api/
+            git commit -m "chore: add Kotlin ABI baseline [skip ci]"
+            git push
+          else
+            echo "Kotlin ABI baseline is missing; refusing to generate it from a pull request."
+            exit 1
+          fi
 
   desktop-tests:
     runs-on: ubuntu-latest
