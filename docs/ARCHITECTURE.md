@@ -1,22 +1,17 @@
 # Architecture
 
-The application owns navigation state. EasyNiddle supplies typed route contracts, deterministic stack policies, a Navigation 3 host adapter, and optional per-host conveniences. There is no process-global navigator singleton.
+EasyNiddle is a Kotlin Multiplatform convenience layer over official Navigation 3 primitives. It does not introduce a second navigation engine.
 
-## Layers
-1. Route model — serializable `NiddleRoute` keys.
-2. Back-stack policy — pure operations with explicit root and duplicate semantics.
-3. Multi-stack state — Compose snapshot-aware independent tab histories.
-4. Entry mapping — Navigation 3 entry-provider integration.
-5. Host adapter — Navigation 3 `NavDisplay` integration.
-6. Platform adapters — back dispatch and platform integrations isolated by source set.
+## Core principles
+- Navigation 3 owns rendering and the observable back stack.
+- Applications own route keys and may own the back stack.
+- Route keys implement `NiddleRoute` and are serializable for state restoration.
+- `NiddleController` provides explicit stack operations.
+- `NiddleMultiStack` keeps independent histories for top-level destinations.
+- `NiddleGraph` validates typed route ownership, nested graph boundaries, and start destinations. Entry rendering remains registered through Navigation 3's official entry-provider API.
 
-## Multiple back stacks
-Each tab owns a separate stack. Switching tabs preserves the previous tab's history. Back only mutates the active tab. Reselect behavior is opt-in and can pop the selected tab to its root.
+## Graph validation
+A graph declares a start route, registered route classes, and optional nested graphs. Duplicate route classes are rejected across the complete graph tree. A graph's start destination must be registered in that graph. Nested graphs own their own start destination and can be queried through the root graph's `contains` and `routeTypes` APIs.
 
-## State ownership
-Create one navigation state holder per host. Do not put a navigator in a global singleton. For process recreation, configure Navigation 3's saved-state serializer with every concrete route serializer.
-
-## Results
-Results will be typed, destination-scoped, lifecycle-aware, and consumed once; avoid a global `SharedFlow<Any>` broadcast.
-
-Common code must not depend on Android Activity, Context, AppCompat, Java serialization, or platform-only lifecycle APIs.
+## State and lifecycle
+Back-stack persistence uses Navigation 3's saved-state integration. Destination UI state is preserved by Navigation 3's saveable entry decorator. Platform-specific lifecycle behavior must be validated per target before release.

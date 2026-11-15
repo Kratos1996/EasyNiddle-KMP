@@ -11,8 +11,9 @@
 - [ ] Verify Kotlin/AGP/Compose/Navigation 3 version matrix with green CI
 
 ## Navigation API
-- [ ] Typed graph DSL with duplicate-route diagnostics
-- [ ] Nested graphs
+- [x] Typed route graph metadata and duplicate-route diagnostics
+- [x] Nested graph ownership and start-destination validation
+- [ ] Typed destination content registration integrated with Navigation 3 entry provider
 - [ ] Typed one-shot destination results
 - [ ] Deep links
 - [ ] State restoration tests
