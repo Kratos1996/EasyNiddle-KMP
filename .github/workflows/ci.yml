@@ -6,6 +6,25 @@ on:
   pull_request:
 
 jobs:
+  abi-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.3.0"
+      - name: Generate initial ABI reference dump
+        run: gradle :easyniddle:updateKotlinAbi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: easyniddle-abi-baseline
+          path: api/
+          if-no-files-found: error
+
   desktop-tests:
     runs-on: ubuntu-latest
     steps:
