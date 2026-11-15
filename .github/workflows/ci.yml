@@ -62,6 +62,8 @@ jobs:
           :easyniddle:compileAndroidMain
           :easyniddle:compileKotlinDesktop
           :easyniddle:compileKotlinWasmJs
+      - name: Verify minified Android consumer with R8
+        run: gradle :r8-smoke:assembleRelease
 
   ios-compile:
     runs-on: macos-latest
