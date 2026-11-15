@@ -9,6 +9,9 @@ plugins {
 }
 
 kotlin {
+    // Track the published Kotlin API so accidental binary-breaking changes are caught in CI.
+    abiValidation()
+
     android {
         namespace = "dev.ishant.easyniddle"
         compileSdk = 36
