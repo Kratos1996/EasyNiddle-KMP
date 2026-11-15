@@ -22,7 +22,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: easyniddle-abi-baseline
-          path: api/
+          path: easyniddle/api/
           if-no-files-found: error
 
   desktop-tests:
