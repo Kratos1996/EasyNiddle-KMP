@@ -7,8 +7,8 @@
 - [x] Navigation 3 host adapter and entry-provider bridge
 - [x] Caller-owned back stack for navigation actions
 - [x] Independent bottom-tab stacks
-- [x] Restore Intel iOS Simulator (iosX64) with a compatible dependency baseline
-- [x] Verify full Android/iOS/Desktop/WasmJs version matrix with green CI
+- [x] Restore Intel iOS Simulator (`iosX64`) with a compatible dependency baseline
+- [x] Verify Android/iOS/Desktop/WasmJs target compilation in CI
 
 ## Navigation API
 - [x] Typed route graph metadata and duplicate-route diagnostics
@@ -25,6 +25,9 @@
 ## Production
 - [x] Android/iOS/Desktop/WasmJs CI matrix
 - [x] Runnable Compose Desktop sample application
-- [ ] API compatibility and R8 verification
-- [ ] KDoc, migration guide, cookbook
+- [x] Kotlin ABI compatibility validation
+- [x] Minified Android consumer verification with R8
+- [x] Public API KDoc
+- [x] Quick start, architecture, migration guide, and cookbook
+- [ ] Gradle Wrapper bootstrap and committed wrapper files
 - [ ] Maven Central publishing and signed releases

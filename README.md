@@ -1,45 +1,81 @@
 # EasyNiddle
 
-A developer-friendly, type-safe navigation layer for Compose Multiplatform, built on Navigation 3.
+A developer-friendly, type-safe navigation convenience layer for Compose Multiplatform, built on official Navigation 3 primitives.
 
-> Early development. Public APIs are not stable yet.
+> **Development status:** early development. Public APIs may change before the first stable release.
 
-## Targets
+## Supported targets
+
 - Android
-- iOS (iosArm64, iosSimulatorArm64, iosX64)
+- iOS device: `iosArm64`
+- iOS simulators: `iosSimulatorArm64`, `iosX64` (Intel)
 - Desktop JVM
-- Web (WasmJs)
+- Web: `wasmJs`
 
-## Principles
-- Small, discoverable API for common navigation.
-- App-owned back stack; no hidden global singleton.
-- Serializable, type-safe route keys.
-- Multiplatform-first common code (no Android `Context`, `Activity`, or Java serialization).
-- Explicit stack behavior and independently testable operations.
-- Escape hatches to the underlying Navigation 3 primitives.
+The Intel iOS Simulator target is intentional. The dependency versions are pinned to a compatible Compose Multiplatform line; see [compatibility policy](docs/COMPATIBILITY.md).
 
-## Current features
-- Navigation 3 host adapter and official entry-provider bridge.
-- Typed route graphs, nested graph ownership, and route registration validation.
-- Per-host navigation controller convenience API.
-- Independent, snapshot-aware bottom-navigation stacks.
-- Typed one-shot destination results.
-- Multiplatform deep-link pattern matching with typed route resolution.
-- Multiplatform SavedStateConfiguration helper for polymorphic route registration.
-- Deterministic stack operations and common unit tests.
+## Features
 
-## Sample application
+- Navigation 3 host adapter and official entry-provider DSL.
+- Serializable, typed route keys and validated nested route graphs.
+- Caller-owned back stack with a small `NiddleController` convenience facade.
+- Independent, snapshot-aware bottom-navigation histories.
+- Typed one-shot in-memory destination results.
+- Common deep-link pattern matching and typed route resolution.
+- Polymorphic route serializer configuration for Navigation 3 saved-state support.
+- Configurable push, pop, and predictive-back transitions.
+- Kotlin ABI compatibility validation and an Android minified-consumer R8 smoke build.
 
-A runnable Compose Desktop sample demonstrates serializable routes, graph registration, the Navigation 3 host, typed route arguments, and controller-based back navigation.
+## Documentation
 
-Run it from the repository root:
+| Guide | What it covers |
+|---|---|
+| [Quick start](docs/QUICK_START.md) | Set up routes, graph, entries, host, and navigation |
+| [Architecture](docs/ARCHITECTURE.md) | API responsibilities, state ownership, and platform boundaries |
+| [Cookbook](docs/COOKBOOK.md) | Bottom tabs, deep links, results, nested graphs, transitions |
+| [Migration guide](docs/MIGRATION.md) | Move an existing Navigation Compose host to EasyNiddle |
+| [Compatibility](docs/COMPATIBILITY.md) | Dependency baseline and why `iosX64` is retained |
+| [Roadmap](docs/ROADMAP.md) | Completed and planned work |
+
+## Sample
+
+A runnable Compose Desktop sample demonstrates serializable routes, graph registration, Navigation 3 entries, typed route arguments, and controller-based back navigation.
+
+After the Gradle Wrapper is generated in the repository, run:
+
+```bash
+./gradlew :sample:run
+```
+
+Until then, use an installed Gradle 9.3.0:
 
 ```bash
 gradle :sample:run
 ```
 
-## Build
-The CI workflow installs Gradle 9.3.0, compiles the sample app, and runs the library's Desktop target tests. It also compiles Android, Desktop, WasmJs, iosArm64, iosSimulatorArm64, and iosX64. A Gradle wrapper will be added once the version baseline is finalized.
+## Build and CI
 
-## Status
-Early development. Public APIs and platform behavior are still being validated; host-level process recreation coverage remains planned.
+CI uses Gradle 9.3.0 and Java 21. It validates:
+
+- Android, Desktop JVM, and WasmJs compilation.
+- iOS device and simulator compilation, including Intel `iosX64`.
+- Desktop sample compilation and common library tests.
+- Minified Android consumer build with R8.
+- Kotlin ABI compatibility against the committed API baseline.
+
+Run the full target matrix and tests through the GitHub Actions workflow. iOS compilation requires macOS.
+
+## Important limitations
+
+- Host-level process recreation tests on Android and iOS are still planned. The common serializer round-trip tests do not replace app-level lifecycle tests.
+- Deep-link URL receiving and OS/browser link registration remain the host application's responsibility.
+- `NiddleResultStore` is in-memory and is not restored after process death.
+- Maven Central publishing and signed release setup are not configured yet.
+
+## Project principles
+
+- Keep Navigation 3 visible rather than creating a parallel navigation engine.
+- Keep navigation state scoped to each host; no global navigator singleton.
+- Keep route keys small, immutable, and serializable.
+- Keep common code free from Android `Context`, `Activity`, and Java serialization.
+- Prefer deterministic APIs with common tests and explicit platform validation.
