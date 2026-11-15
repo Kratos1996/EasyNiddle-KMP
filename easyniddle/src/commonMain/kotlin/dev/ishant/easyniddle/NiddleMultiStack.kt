@@ -21,6 +21,7 @@ public class NiddleMultiStack<Tab : Any, Route : Any>(
 ) {
     private val stacks = mutableStateMapOf<Tab, androidx.compose.runtime.snapshots.SnapshotStateList<Route>>()
 
+    /** Selected tab; reads from Compose observe snapshot changes. */
     public var selectedTab: Tab by mutableStateOf(initialTab)
         private set
 
@@ -56,6 +57,7 @@ public class NiddleMultiStack<Tab : Any, Route : Any>(
     }
 
     /** Pushes a destination on the active tab's stack. */
+    /** Pushes [route] onto the selected tab's history. */
     public fun navigate(route: Route) {
         stacks.getValue(selectedTab).add(route)
     }
@@ -67,6 +69,7 @@ public class NiddleMultiStack<Tab : Any, Route : Any>(
     }
 
     /** Pops the active stack while preserving its root. */
+    /** Pops the selected tab's top route while preserving its root. */
     public fun back(): Boolean {
         val stack = stacks.getValue(selectedTab)
         if (stack.size <= 1) return false
@@ -75,6 +78,11 @@ public class NiddleMultiStack<Tab : Any, Route : Any>(
     }
 
     /** Pops to the last matching destination on the active stack. */
+    /**
+     * Pops the selected tab to the last [route] match. With [inclusive],
+     * removes the match too; the root is never removed. Returns false if no
+     * valid change can be made.
+     */
     public fun popTo(route: Route, inclusive: Boolean = false): Boolean {
         val stack = stacks.getValue(selectedTab)
         val index = stack.indexOfLast { it == route }
@@ -86,6 +94,7 @@ public class NiddleMultiStack<Tab : Any, Route : Any>(
     }
 
     /** Resets one tab to its root. */
+    /** Resets [tab] to its configured root; defaults to the selected tab. */
     public fun popToRoot(tab: Tab = selectedTab) {
         val stack = requireNotNull(stacks[tab]) { "Unknown tab: $tab" }
         while (stack.size > 1) stack.removeAt(stack.lastIndex)
