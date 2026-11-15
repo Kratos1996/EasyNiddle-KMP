@@ -8,7 +8,7 @@
 - [x] Caller-owned back stack for navigation actions
 - [x] Independent bottom-tab stacks
 - [x] Restore Intel iOS Simulator (iosX64) with a compatible dependency baseline
-- [ ] Verify full Android/iOS/Desktop/WasmJs version matrix with green CI
+- [x] Verify full Android/iOS/Desktop/WasmJs version matrix with green CI
 
 ## Navigation API
 - [x] Typed route graph metadata and duplicate-route diagnostics
@@ -23,7 +23,7 @@
 - [ ] Host-level process recreation tests on Android and iOS
 
 ## Production
-- [ ] Android/iOS/Desktop/WasmJs CI matrix
+- [x] Android/iOS/Desktop/WasmJs CI matrix
 - [ ] Sample application
 - [ ] API compatibility and R8 verification
 - [ ] KDoc, migration guide, cookbook
