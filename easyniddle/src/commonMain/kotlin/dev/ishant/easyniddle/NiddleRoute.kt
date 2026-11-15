@@ -1,8 +1,6 @@
 package dev.ishant.easyniddle
 
 import androidx.navigation3.runtime.NavKey
-import kotlinx.serialization.Serializable
 
-/** Serializable route marker used by EasyNiddle destinations. */
-@Serializable
+/** Route marker. Concrete route types should be annotated with kotlinx.serialization.Serializable. */
 public interface NiddleRoute : NavKey
