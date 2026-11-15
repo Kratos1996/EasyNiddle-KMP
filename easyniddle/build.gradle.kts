@@ -10,7 +10,7 @@ plugins {
 
 kotlin {
     // Track the published Kotlin API so accidental binary-breaking changes are caught in CI.
-    abiValidation()
+    abiValidation {}
 
     android {
         namespace = "dev.ishant.easyniddle"
