@@ -1,0 +1,33 @@
+plugins {
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.android.library)
+}
+
+kotlin {
+    androidTarget()
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
+    jvm("desktop")
+    wasmJs { browser() }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.ui)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.navigation3.runtime)
+            implementation(libs.navigation3.ui)
+        }
+        commonTest.dependencies { implementation(kotlin("test")) }
+    }
+}
+
+android {
+    namespace = "dev.ishant.easyniddle"
+    compileSdk = 36
+    defaultConfig { minSdk = 23 }
+}
