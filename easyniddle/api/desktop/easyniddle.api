@@ -1,0 +1,124 @@
+public final class dev/ishant/easyniddle/BackStackOperations {
+	public static final field $stable I
+	public static final field INSTANCE Ldev/ishant/easyniddle/BackStackOperations;
+	public final fun navigateSingleTop (Ljava/util/List;Ljava/lang/Object;)V
+	public final fun pop (Ljava/util/List;)Z
+	public final fun popTo (Ljava/util/List;Ljava/lang/Object;Z)Z
+	public static synthetic fun popTo$default (Ldev/ishant/easyniddle/BackStackOperations;Ljava/util/List;Ljava/lang/Object;ZILjava/lang/Object;)Z
+}
+
+public final class dev/ishant/easyniddle/NiddleController {
+	public static final field $stable I
+	public fun <init> (Landroidx/navigation3/runtime/NavBackStack;)V
+	public final fun back ()Z
+	public final fun getCurrent ()Landroidx/navigation3/runtime/NavKey;
+	public final fun getSize ()I
+	public final fun navigate (Landroidx/navigation3/runtime/NavKey;)V
+	public final fun navigateSingleTop (Landroidx/navigation3/runtime/NavKey;)V
+	public final fun popTo (Landroidx/navigation3/runtime/NavKey;Z)Z
+	public static synthetic fun popTo$default (Ldev/ishant/easyniddle/NiddleController;Landroidx/navigation3/runtime/NavKey;ZILjava/lang/Object;)Z
+	public final fun replace (Landroidx/navigation3/runtime/NavKey;)V
+}
+
+public final class dev/ishant/easyniddle/NiddleDeepLinkBuilder {
+	public static final field $stable I
+	public final fun deepLink (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class dev/ishant/easyniddle/NiddleDeepLinkMatch {
+	public static final field $stable I
+	public final fun getPathParameters ()Ljava/util/Map;
+	public final fun getQueryParameters ()Ljava/util/Map;
+	public final fun getUri ()Ljava/lang/String;
+	public final fun pathParameter (Ljava/lang/String;)Ljava/lang/String;
+	public final fun queryParameter (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class dev/ishant/easyniddle/NiddleDeepLinkRegistry {
+	public static final field $stable I
+	public final fun requireResolve (Ljava/lang/String;)Landroidx/navigation3/runtime/NavKey;
+	public final fun resolve (Ljava/lang/String;)Landroidx/navigation3/runtime/NavKey;
+}
+
+public final class dev/ishant/easyniddle/NiddleDeepLinksKt {
+	public static final fun niddleDeepLinks (Lkotlin/jvm/functions/Function1;)Ldev/ishant/easyniddle/NiddleDeepLinkRegistry;
+}
+
+public final class dev/ishant/easyniddle/NiddleGraph {
+	public static final field $stable I
+	public final fun contains (Landroidx/navigation3/runtime/NavKey;)Z
+	public final fun getNestedGraphs ()Ljava/util/List;
+	public final fun getRouteTypes ()Ljava/util/Set;
+	public final fun getStartDestination ()Landroidx/navigation3/runtime/NavKey;
+	public final fun requireContains (Landroidx/navigation3/runtime/NavKey;)V
+}
+
+public final class dev/ishant/easyniddle/NiddleGraphBuilder {
+	public static final field $stable I
+	public final fun destination (Lkotlin/reflect/KClass;)V
+	public final fun getStartDestination ()Landroidx/navigation3/runtime/NavKey;
+	public final fun nestedGraph (Landroidx/navigation3/runtime/NavKey;Lkotlin/jvm/functions/Function1;)V
+	public final fun setStartDestination (Landroidx/navigation3/runtime/NavKey;)V
+}
+
+public final class dev/ishant/easyniddle/NiddleGraphKt {
+	public static final fun niddleGraph (Landroidx/navigation3/runtime/NavKey;Lkotlin/jvm/functions/Function1;)Ldev/ishant/easyniddle/NiddleGraph;
+}
+
+public final class dev/ishant/easyniddle/NiddleMultiStack {
+	public static final field $stable I
+	public fun <init> (Ljava/util/Map;Ljava/lang/Object;)V
+	public final fun back ()Z
+	public final fun getCurrentStack ()Ljava/util/List;
+	public final fun getSelectedTab ()Ljava/lang/Object;
+	public final fun getTabs ()Ljava/util/List;
+	public final fun navigate (Ljava/lang/Object;)V
+	public final fun navigateSingleTop (Ljava/lang/Object;)V
+	public final fun popTo (Ljava/lang/Object;Z)Z
+	public static synthetic fun popTo$default (Ldev/ishant/easyniddle/NiddleMultiStack;Ljava/lang/Object;ZILjava/lang/Object;)Z
+	public final fun popToRoot (Ljava/lang/Object;)V
+	public static synthetic fun popToRoot$default (Ldev/ishant/easyniddle/NiddleMultiStack;Ljava/lang/Object;ILjava/lang/Object;)V
+	public final fun selectTab (Ljava/lang/Object;Z)V
+	public static synthetic fun selectTab$default (Ldev/ishant/easyniddle/NiddleMultiStack;Ljava/lang/Object;ZILjava/lang/Object;)V
+	public final fun stackFor (Ljava/lang/Object;)Ljava/util/List;
+}
+
+public final class dev/ishant/easyniddle/NiddleNavHostKt {
+	public static final fun NiddleNavHost (Landroidx/navigation3/runtime/NavBackStack;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun getNiddlePredictiveFadeTransition ()Lkotlin/jvm/functions/Function2;
+	public static final fun getNiddleSlideInTransition ()Lkotlin/jvm/functions/Function1;
+	public static final fun getNiddleSlidePopTransition ()Lkotlin/jvm/functions/Function1;
+	public static final fun niddleEntries (Ldev/ishant/easyniddle/NiddleGraph;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function1;
+	public static final fun niddleEntries (Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function1;
+	public static final fun rememberNiddleBackStack (Landroidx/savedstate/serialization/SavedStateConfiguration;Landroidx/navigation3/runtime/NavKey;Landroidx/compose/runtime/Composer;I)Landroidx/navigation3/runtime/NavBackStack;
+}
+
+public final class dev/ishant/easyniddle/NiddleResultKey {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getName ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/ishant/easyniddle/NiddleResultStore {
+	public static final field $stable I
+	public fun <init> ()V
+	public final fun clear (Ldev/ishant/easyniddle/NiddleResultKey;)V
+	public final fun clearAll ()V
+	public final fun consume (Ldev/ishant/easyniddle/NiddleResultKey;)Ljava/lang/Object;
+	public final fun hasResult (Ldev/ishant/easyniddle/NiddleResultKey;)Z
+	public final fun set (Ldev/ishant/easyniddle/NiddleResultKey;Ljava/lang/Object;)V
+}
+
+public abstract interface class dev/ishant/easyniddle/NiddleRoute : androidx/navigation3/runtime/NavKey {
+}
+
+public final class dev/ishant/easyniddle/NiddleSavedStateKt {
+	public static final fun niddleSavedStateConfiguration (Lkotlin/jvm/functions/Function1;)Landroidx/savedstate/serialization/SavedStateConfiguration;
+}
+
+public final class dev/ishant/easyniddle/NiddleSerializersModuleBuilder {
+	public static final field $stable I
+	public final fun route (Lkotlin/reflect/KClass;Lkotlinx/serialization/KSerializer;)V
+}
+

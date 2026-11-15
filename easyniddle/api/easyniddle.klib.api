@@ -1,0 +1,154 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <EasyNiddle-KMP:easyniddle>
+abstract interface dev.ishant.easyniddle/NiddleRoute : androidx.navigation3.runtime/NavKey // dev.ishant.easyniddle/NiddleRoute|null[0]
+
+final class <#A: kotlin/Any, #B: kotlin/Any> dev.ishant.easyniddle/NiddleMultiStack { // dev.ishant.easyniddle/NiddleMultiStack|null[0]
+    constructor <init>(kotlin.collections/Map<#A, #B>, #A) // dev.ishant.easyniddle/NiddleMultiStack.<init>|<init>(kotlin.collections.Map<1:0,1:1>;1:0){}[0]
+
+    final val currentStack // dev.ishant.easyniddle/NiddleMultiStack.currentStack|{}currentStack[0]
+        final fun <get-currentStack>(): kotlin.collections/List<#B> // dev.ishant.easyniddle/NiddleMultiStack.currentStack.<get-currentStack>|<get-currentStack>(){}[0]
+    final val tabs // dev.ishant.easyniddle/NiddleMultiStack.tabs|{}tabs[0]
+        final fun <get-tabs>(): kotlin.collections/List<#A> // dev.ishant.easyniddle/NiddleMultiStack.tabs.<get-tabs>|<get-tabs>(){}[0]
+
+    final var selectedTab // dev.ishant.easyniddle/NiddleMultiStack.selectedTab|{}selectedTab[0]
+        final fun <get-selectedTab>(): #A // dev.ishant.easyniddle/NiddleMultiStack.selectedTab.<get-selectedTab>|<get-selectedTab>(){}[0]
+
+    final fun back(): kotlin/Boolean // dev.ishant.easyniddle/NiddleMultiStack.back|back(){}[0]
+    final fun navigate(#B) // dev.ishant.easyniddle/NiddleMultiStack.navigate|navigate(1:1){}[0]
+    final fun navigateSingleTop(#B) // dev.ishant.easyniddle/NiddleMultiStack.navigateSingleTop|navigateSingleTop(1:1){}[0]
+    final fun popTo(#B, kotlin/Boolean = ...): kotlin/Boolean // dev.ishant.easyniddle/NiddleMultiStack.popTo|popTo(1:1;kotlin.Boolean){}[0]
+    final fun popToRoot(#A = ...) // dev.ishant.easyniddle/NiddleMultiStack.popToRoot|popToRoot(1:0){}[0]
+    final fun selectTab(#A, kotlin/Boolean = ...) // dev.ishant.easyniddle/NiddleMultiStack.selectTab|selectTab(1:0;kotlin.Boolean){}[0]
+    final fun stackFor(#A): kotlin.collections/List<#B> // dev.ishant.easyniddle/NiddleMultiStack.stackFor|stackFor(1:0){}[0]
+}
+
+final class <#A: kotlin/Any> dev.ishant.easyniddle/NiddleResultKey { // dev.ishant.easyniddle/NiddleResultKey|null[0]
+    constructor <init>(kotlin/String) // dev.ishant.easyniddle/NiddleResultKey.<init>|<init>(kotlin.String){}[0]
+
+    final val name // dev.ishant.easyniddle/NiddleResultKey.name|{}name[0]
+        final fun <get-name>(): kotlin/String // dev.ishant.easyniddle/NiddleResultKey.name.<get-name>|<get-name>(){}[0]
+
+    final fun toString(): kotlin/String // dev.ishant.easyniddle/NiddleResultKey.toString|toString(){}[0]
+}
+
+final class dev.ishant.easyniddle/NiddleController { // dev.ishant.easyniddle/NiddleController|null[0]
+    constructor <init>(androidx.navigation3.runtime/NavBackStack<androidx.navigation3.runtime/NavKey>) // dev.ishant.easyniddle/NiddleController.<init>|<init>(androidx.navigation3.runtime.NavBackStack<androidx.navigation3.runtime.NavKey>){}[0]
+
+    final val current // dev.ishant.easyniddle/NiddleController.current|{}current[0]
+        final fun <get-current>(): androidx.navigation3.runtime/NavKey? // dev.ishant.easyniddle/NiddleController.current.<get-current>|<get-current>(){}[0]
+    final val size // dev.ishant.easyniddle/NiddleController.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // dev.ishant.easyniddle/NiddleController.size.<get-size>|<get-size>(){}[0]
+
+    final fun back(): kotlin/Boolean // dev.ishant.easyniddle/NiddleController.back|back(){}[0]
+    final fun navigate(androidx.navigation3.runtime/NavKey) // dev.ishant.easyniddle/NiddleController.navigate|navigate(androidx.navigation3.runtime.NavKey){}[0]
+    final fun navigateSingleTop(androidx.navigation3.runtime/NavKey) // dev.ishant.easyniddle/NiddleController.navigateSingleTop|navigateSingleTop(androidx.navigation3.runtime.NavKey){}[0]
+    final fun popTo(androidx.navigation3.runtime/NavKey, kotlin/Boolean = ...): kotlin/Boolean // dev.ishant.easyniddle/NiddleController.popTo|popTo(androidx.navigation3.runtime.NavKey;kotlin.Boolean){}[0]
+    final fun replace(androidx.navigation3.runtime/NavKey) // dev.ishant.easyniddle/NiddleController.replace|replace(androidx.navigation3.runtime.NavKey){}[0]
+}
+
+final class dev.ishant.easyniddle/NiddleDeepLinkBuilder { // dev.ishant.easyniddle/NiddleDeepLinkBuilder|null[0]
+    final fun <#A1: androidx.navigation3.runtime/NavKey> deepLink(kotlin/String, kotlin/Function1<dev.ishant.easyniddle/NiddleDeepLinkMatch, #A1>) // dev.ishant.easyniddle/NiddleDeepLinkBuilder.deepLink|deepLink(kotlin.String;kotlin.Function1<dev.ishant.easyniddle.NiddleDeepLinkMatch,0:0>){0§<androidx.navigation3.runtime.NavKey>}[0]
+}
+
+final class dev.ishant.easyniddle/NiddleDeepLinkMatch { // dev.ishant.easyniddle/NiddleDeepLinkMatch|null[0]
+    final val pathParameters // dev.ishant.easyniddle/NiddleDeepLinkMatch.pathParameters|{}pathParameters[0]
+        final fun <get-pathParameters>(): kotlin.collections/Map<kotlin/String, kotlin/String> // dev.ishant.easyniddle/NiddleDeepLinkMatch.pathParameters.<get-pathParameters>|<get-pathParameters>(){}[0]
+    final val queryParameters // dev.ishant.easyniddle/NiddleDeepLinkMatch.queryParameters|{}queryParameters[0]
+        final fun <get-queryParameters>(): kotlin.collections/Map<kotlin/String, kotlin/String> // dev.ishant.easyniddle/NiddleDeepLinkMatch.queryParameters.<get-queryParameters>|<get-queryParameters>(){}[0]
+    final val uri // dev.ishant.easyniddle/NiddleDeepLinkMatch.uri|{}uri[0]
+        final fun <get-uri>(): kotlin/String // dev.ishant.easyniddle/NiddleDeepLinkMatch.uri.<get-uri>|<get-uri>(){}[0]
+
+    final fun pathParameter(kotlin/String): kotlin/String // dev.ishant.easyniddle/NiddleDeepLinkMatch.pathParameter|pathParameter(kotlin.String){}[0]
+    final fun queryParameter(kotlin/String): kotlin/String? // dev.ishant.easyniddle/NiddleDeepLinkMatch.queryParameter|queryParameter(kotlin.String){}[0]
+}
+
+final class dev.ishant.easyniddle/NiddleDeepLinkRegistry { // dev.ishant.easyniddle/NiddleDeepLinkRegistry|null[0]
+    final fun requireResolve(kotlin/String): androidx.navigation3.runtime/NavKey // dev.ishant.easyniddle/NiddleDeepLinkRegistry.requireResolve|requireResolve(kotlin.String){}[0]
+    final fun resolve(kotlin/String): androidx.navigation3.runtime/NavKey? // dev.ishant.easyniddle/NiddleDeepLinkRegistry.resolve|resolve(kotlin.String){}[0]
+}
+
+final class dev.ishant.easyniddle/NiddleGraph { // dev.ishant.easyniddle/NiddleGraph|null[0]
+    final val nestedGraphs // dev.ishant.easyniddle/NiddleGraph.nestedGraphs|{}nestedGraphs[0]
+        final fun <get-nestedGraphs>(): kotlin.collections/List<dev.ishant.easyniddle/NiddleGraph> // dev.ishant.easyniddle/NiddleGraph.nestedGraphs.<get-nestedGraphs>|<get-nestedGraphs>(){}[0]
+    final val routeTypes // dev.ishant.easyniddle/NiddleGraph.routeTypes|{}routeTypes[0]
+        final fun <get-routeTypes>(): kotlin.collections/Set<kotlin.reflect/KClass<out androidx.navigation3.runtime/NavKey>> // dev.ishant.easyniddle/NiddleGraph.routeTypes.<get-routeTypes>|<get-routeTypes>(){}[0]
+    final val startDestination // dev.ishant.easyniddle/NiddleGraph.startDestination|{}startDestination[0]
+        final fun <get-startDestination>(): androidx.navigation3.runtime/NavKey // dev.ishant.easyniddle/NiddleGraph.startDestination.<get-startDestination>|<get-startDestination>(){}[0]
+
+    final fun contains(androidx.navigation3.runtime/NavKey): kotlin/Boolean // dev.ishant.easyniddle/NiddleGraph.contains|contains(androidx.navigation3.runtime.NavKey){}[0]
+    final fun requireContains(androidx.navigation3.runtime/NavKey) // dev.ishant.easyniddle/NiddleGraph.requireContains|requireContains(androidx.navigation3.runtime.NavKey){}[0]
+}
+
+final class dev.ishant.easyniddle/NiddleGraphBuilder { // dev.ishant.easyniddle/NiddleGraphBuilder|null[0]
+    final var startDestination // dev.ishant.easyniddle/NiddleGraphBuilder.startDestination|{}startDestination[0]
+        final fun <get-startDestination>(): androidx.navigation3.runtime/NavKey // dev.ishant.easyniddle/NiddleGraphBuilder.startDestination.<get-startDestination>|<get-startDestination>(){}[0]
+        final fun <set-startDestination>(androidx.navigation3.runtime/NavKey) // dev.ishant.easyniddle/NiddleGraphBuilder.startDestination.<set-startDestination>|<set-startDestination>(androidx.navigation3.runtime.NavKey){}[0]
+
+    final fun destination(kotlin.reflect/KClass<out androidx.navigation3.runtime/NavKey>) // dev.ishant.easyniddle/NiddleGraphBuilder.destination|destination(kotlin.reflect.KClass<out|androidx.navigation3.runtime.NavKey>){}[0]
+    final fun nestedGraph(androidx.navigation3.runtime/NavKey, kotlin/Function1<dev.ishant.easyniddle/NiddleGraphBuilder, kotlin/Unit>) // dev.ishant.easyniddle/NiddleGraphBuilder.nestedGraph|nestedGraph(androidx.navigation3.runtime.NavKey;kotlin.Function1<dev.ishant.easyniddle.NiddleGraphBuilder,kotlin.Unit>){}[0]
+    final inline fun <#A1: reified androidx.navigation3.runtime/NavKey> destination() // dev.ishant.easyniddle/NiddleGraphBuilder.destination|destination(){0§<androidx.navigation3.runtime.NavKey>}[0]
+}
+
+final class dev.ishant.easyniddle/NiddleResultStore { // dev.ishant.easyniddle/NiddleResultStore|null[0]
+    constructor <init>() // dev.ishant.easyniddle/NiddleResultStore.<init>|<init>(){}[0]
+
+    final fun <#A1: kotlin/Any> consume(dev.ishant.easyniddle/NiddleResultKey<#A1>): #A1? // dev.ishant.easyniddle/NiddleResultStore.consume|consume(dev.ishant.easyniddle.NiddleResultKey<0:0>){0§<kotlin.Any>}[0]
+    final fun <#A1: kotlin/Any> set(dev.ishant.easyniddle/NiddleResultKey<#A1>, #A1) // dev.ishant.easyniddle/NiddleResultStore.set|set(dev.ishant.easyniddle.NiddleResultKey<0:0>;0:0){0§<kotlin.Any>}[0]
+    final fun clear(dev.ishant.easyniddle/NiddleResultKey<*>) // dev.ishant.easyniddle/NiddleResultStore.clear|clear(dev.ishant.easyniddle.NiddleResultKey<*>){}[0]
+    final fun clearAll() // dev.ishant.easyniddle/NiddleResultStore.clearAll|clearAll(){}[0]
+    final fun hasResult(dev.ishant.easyniddle/NiddleResultKey<*>): kotlin/Boolean // dev.ishant.easyniddle/NiddleResultStore.hasResult|hasResult(dev.ishant.easyniddle.NiddleResultKey<*>){}[0]
+}
+
+final class dev.ishant.easyniddle/NiddleSerializersModuleBuilder { // dev.ishant.easyniddle/NiddleSerializersModuleBuilder|null[0]
+    final fun <#A1: androidx.navigation3.runtime/NavKey> route(kotlin.reflect/KClass<#A1>, kotlinx.serialization/KSerializer<#A1>) // dev.ishant.easyniddle/NiddleSerializersModuleBuilder.route|route(kotlin.reflect.KClass<0:0>;kotlinx.serialization.KSerializer<0:0>){0§<androidx.navigation3.runtime.NavKey>}[0]
+    final inline fun <#A1: reified androidx.navigation3.runtime/NavKey> route(kotlinx.serialization/KSerializer<#A1>) // dev.ishant.easyniddle/NiddleSerializersModuleBuilder.route|route(kotlinx.serialization.KSerializer<0:0>){0§<androidx.navigation3.runtime.NavKey>}[0]
+}
+
+final object dev.ishant.easyniddle/BackStackOperations { // dev.ishant.easyniddle/BackStackOperations|null[0]
+    final fun <#A1: kotlin/Any?> navigateSingleTop(kotlin.collections/MutableList<#A1>, #A1) // dev.ishant.easyniddle/BackStackOperations.navigateSingleTop|navigateSingleTop(kotlin.collections.MutableList<0:0>;0:0){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> pop(kotlin.collections/MutableList<#A1>): kotlin/Boolean // dev.ishant.easyniddle/BackStackOperations.pop|pop(kotlin.collections.MutableList<0:0>){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> popTo(kotlin.collections/MutableList<#A1>, #A1, kotlin/Boolean = ...): kotlin/Boolean // dev.ishant.easyniddle/BackStackOperations.popTo|popTo(kotlin.collections.MutableList<0:0>;0:0;kotlin.Boolean){0§<kotlin.Any?>}[0]
+}
+
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_BackStackOperations$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_BackStackOperations$stableprop|#static{}dev_ishant_easyniddle_BackStackOperations$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleController$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleController$stableprop|#static{}dev_ishant_easyniddle_NiddleController$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkBuilder$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkBuilder$stableprop|#static{}dev_ishant_easyniddle_NiddleDeepLinkBuilder$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkMatch$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkMatch$stableprop|#static{}dev_ishant_easyniddle_NiddleDeepLinkMatch$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkRegistry$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkRegistry$stableprop|#static{}dev_ishant_easyniddle_NiddleDeepLinkRegistry$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleGraph$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleGraph$stableprop|#static{}dev_ishant_easyniddle_NiddleGraph$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleGraphBuilder$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleGraphBuilder$stableprop|#static{}dev_ishant_easyniddle_NiddleGraphBuilder$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleMultiStack$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleMultiStack$stableprop|#static{}dev_ishant_easyniddle_NiddleMultiStack$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleResultKey$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleResultKey$stableprop|#static{}dev_ishant_easyniddle_NiddleResultKey$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleResultStore$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleResultStore$stableprop|#static{}dev_ishant_easyniddle_NiddleResultStore$stableprop[0]
+final val dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleSerializersModuleBuilder$stableprop // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleSerializersModuleBuilder$stableprop|#static{}dev_ishant_easyniddle_NiddleSerializersModuleBuilder$stableprop[0]
+final val dev.ishant.easyniddle/niddlePredictiveFadeTransition // dev.ishant.easyniddle/niddlePredictiveFadeTransition|{}niddlePredictiveFadeTransition[0]
+    final fun <get-niddlePredictiveFadeTransition>(): kotlin/Function2<androidx.compose.animation/AnimatedContentTransitionScope<androidx.navigation3.scene/Scene<androidx.navigation3.runtime/NavKey>>, kotlin/Int, androidx.compose.animation/ContentTransform> // dev.ishant.easyniddle/niddlePredictiveFadeTransition.<get-niddlePredictiveFadeTransition>|<get-niddlePredictiveFadeTransition>(){}[0]
+final val dev.ishant.easyniddle/niddleSlideInTransition // dev.ishant.easyniddle/niddleSlideInTransition|{}niddleSlideInTransition[0]
+    final fun <get-niddleSlideInTransition>(): kotlin/Function1<androidx.compose.animation/AnimatedContentTransitionScope<androidx.navigation3.scene/Scene<androidx.navigation3.runtime/NavKey>>, androidx.compose.animation/ContentTransform> // dev.ishant.easyniddle/niddleSlideInTransition.<get-niddleSlideInTransition>|<get-niddleSlideInTransition>(){}[0]
+final val dev.ishant.easyniddle/niddleSlidePopTransition // dev.ishant.easyniddle/niddleSlidePopTransition|{}niddleSlidePopTransition[0]
+    final fun <get-niddleSlidePopTransition>(): kotlin/Function1<androidx.compose.animation/AnimatedContentTransitionScope<androidx.navigation3.scene/Scene<androidx.navigation3.runtime/NavKey>>, androidx.compose.animation/ContentTransform> // dev.ishant.easyniddle/niddleSlidePopTransition.<get-niddleSlidePopTransition>|<get-niddleSlidePopTransition>(){}[0]
+
+final fun dev.ishant.easyniddle/NiddleNavHost(androidx.navigation3.runtime/NavBackStack<androidx.navigation3.runtime/NavKey>, kotlin/Function1<androidx.navigation3.runtime/NavKey, androidx.navigation3.runtime/NavEntry<androidx.navigation3.runtime/NavKey>>, kotlin/Function0<kotlin/Unit>?, kotlin/Function1<androidx.compose.animation/AnimatedContentTransitionScope<androidx.navigation3.scene/Scene<androidx.navigation3.runtime/NavKey>>, androidx.compose.animation/ContentTransform>?, kotlin/Function1<androidx.compose.animation/AnimatedContentTransitionScope<androidx.navigation3.scene/Scene<androidx.navigation3.runtime/NavKey>>, androidx.compose.animation/ContentTransform>?, kotlin/Function2<androidx.compose.animation/AnimatedContentTransitionScope<androidx.navigation3.scene/Scene<androidx.navigation3.runtime/NavKey>>, kotlin/Int, androidx.compose.animation/ContentTransform>?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // dev.ishant.easyniddle/NiddleNavHost|NiddleNavHost(androidx.navigation3.runtime.NavBackStack<androidx.navigation3.runtime.NavKey>;kotlin.Function1<androidx.navigation3.runtime.NavKey,androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>;kotlin.Function0<kotlin.Unit>?;kotlin.Function1<androidx.compose.animation.AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<androidx.navigation3.runtime.NavKey>>,androidx.compose.animation.ContentTransform>?;kotlin.Function1<androidx.compose.animation.AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<androidx.navigation3.runtime.NavKey>>,androidx.compose.animation.ContentTransform>?;kotlin.Function2<androidx.compose.animation.AnimatedContentTransitionScope<androidx.navigation3.scene.Scene<androidx.navigation3.runtime.NavKey>>,kotlin.Int,androidx.compose.animation.ContentTransform>?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_BackStackOperations$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_BackStackOperations$stableprop_getter|dev_ishant_easyniddle_BackStackOperations$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleController$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleController$stableprop_getter|dev_ishant_easyniddle_NiddleController$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkBuilder$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkBuilder$stableprop_getter|dev_ishant_easyniddle_NiddleDeepLinkBuilder$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkMatch$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkMatch$stableprop_getter|dev_ishant_easyniddle_NiddleDeepLinkMatch$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkRegistry$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleDeepLinkRegistry$stableprop_getter|dev_ishant_easyniddle_NiddleDeepLinkRegistry$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleGraph$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleGraph$stableprop_getter|dev_ishant_easyniddle_NiddleGraph$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleGraphBuilder$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleGraphBuilder$stableprop_getter|dev_ishant_easyniddle_NiddleGraphBuilder$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleMultiStack$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleMultiStack$stableprop_getter|dev_ishant_easyniddle_NiddleMultiStack$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleResultKey$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleResultKey$stableprop_getter|dev_ishant_easyniddle_NiddleResultKey$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleResultStore$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleResultStore$stableprop_getter|dev_ishant_easyniddle_NiddleResultStore$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleSerializersModuleBuilder$stableprop_getter(): kotlin/Int // dev.ishant.easyniddle/dev_ishant_easyniddle_NiddleSerializersModuleBuilder$stableprop_getter|dev_ishant_easyniddle_NiddleSerializersModuleBuilder$stableprop_getter(){}[0]
+final fun dev.ishant.easyniddle/niddleDeepLinks(kotlin/Function1<dev.ishant.easyniddle/NiddleDeepLinkBuilder, kotlin/Unit>): dev.ishant.easyniddle/NiddleDeepLinkRegistry // dev.ishant.easyniddle/niddleDeepLinks|niddleDeepLinks(kotlin.Function1<dev.ishant.easyniddle.NiddleDeepLinkBuilder,kotlin.Unit>){}[0]
+final fun dev.ishant.easyniddle/niddleEntries(dev.ishant.easyniddle/NiddleGraph, kotlin/Function1<androidx.navigation3.runtime/EntryProviderScope<androidx.navigation3.runtime/NavKey>, kotlin/Unit>): kotlin/Function1<androidx.navigation3.runtime/NavKey, androidx.navigation3.runtime/NavEntry<androidx.navigation3.runtime/NavKey>> // dev.ishant.easyniddle/niddleEntries|niddleEntries(dev.ishant.easyniddle.NiddleGraph;kotlin.Function1<androidx.navigation3.runtime.EntryProviderScope<androidx.navigation3.runtime.NavKey>,kotlin.Unit>){}[0]
+final fun dev.ishant.easyniddle/niddleEntries(kotlin/Function1<androidx.navigation3.runtime/EntryProviderScope<androidx.navigation3.runtime/NavKey>, kotlin/Unit>): kotlin/Function1<androidx.navigation3.runtime/NavKey, androidx.navigation3.runtime/NavEntry<androidx.navigation3.runtime/NavKey>> // dev.ishant.easyniddle/niddleEntries|niddleEntries(kotlin.Function1<androidx.navigation3.runtime.EntryProviderScope<androidx.navigation3.runtime.NavKey>,kotlin.Unit>){}[0]
+final fun dev.ishant.easyniddle/niddleGraph(androidx.navigation3.runtime/NavKey, kotlin/Function1<dev.ishant.easyniddle/NiddleGraphBuilder, kotlin/Unit>): dev.ishant.easyniddle/NiddleGraph // dev.ishant.easyniddle/niddleGraph|niddleGraph(androidx.navigation3.runtime.NavKey;kotlin.Function1<dev.ishant.easyniddle.NiddleGraphBuilder,kotlin.Unit>){}[0]
+final fun dev.ishant.easyniddle/niddleSavedStateConfiguration(kotlin/Function1<dev.ishant.easyniddle/NiddleSerializersModuleBuilder, kotlin/Unit>): androidx.savedstate.serialization/SavedStateConfiguration // dev.ishant.easyniddle/niddleSavedStateConfiguration|niddleSavedStateConfiguration(kotlin.Function1<dev.ishant.easyniddle.NiddleSerializersModuleBuilder,kotlin.Unit>){}[0]
+final fun dev.ishant.easyniddle/rememberNiddleBackStack(androidx.savedstate.serialization/SavedStateConfiguration, androidx.navigation3.runtime/NavKey, androidx.compose.runtime/Composer?, kotlin/Int): androidx.navigation3.runtime/NavBackStack<androidx.navigation3.runtime/NavKey> // dev.ishant.easyniddle/rememberNiddleBackStack|rememberNiddleBackStack(androidx.savedstate.serialization.SavedStateConfiguration;androidx.navigation3.runtime.NavKey;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
