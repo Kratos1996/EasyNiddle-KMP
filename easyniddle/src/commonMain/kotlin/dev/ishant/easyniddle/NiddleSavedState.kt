@@ -3,35 +3,47 @@ package dev.ishant.easyniddle
 import androidx.navigation3.runtime.NavKey
 import androidx.savedstate.serialization.SavedStateConfiguration
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import kotlin.reflect.KClass
 
 /**
  * Builder for the polymorphic serializers required by Navigation 3's
  * multiplatform NavBackStack persistence.
  */
 public class NiddleSerializersModuleBuilder internal constructor() {
-    private val routeSerializers = linkedMapOf<String, KSerializer<out NavKey>>()
+    private val registeredNames = linkedSetOf<String>()
+    private val registrations =
+        mutableListOf<PolymorphicModuleBuilder<NavKey>.() -> Unit>()
 
     /**
      * Registers one concrete serializable route type.
      *
      * Register every route type that can enter this host's back stack.
      */
-    public fun <Route : NavKey> route(serializer: KSerializer<Route>) {
+    public inline fun <reified Route : NavKey> route(serializer: KSerializer<Route>) {
+        route(Route::class, serializer)
+    }
+
+    /** Registers a route serializer when its route class is only available as a value. */
+    public fun <Route : NavKey> route(
+        routeClass: KClass<Route>,
+        serializer: KSerializer<Route>,
+    ) {
         val serialName = serializer.descriptor.serialName
-        require(serialName !in routeSerializers) {
+        require(registeredNames.add(serialName)) {
             "Duplicate Niddle route serializer: '$serialName'."
         }
-        routeSerializers[serialName] = serializer
+        registrations += {
+            subclass(routeClass, serializer)
+        }
     }
 
     internal fun build(): SerializersModule = SerializersModule {
         polymorphic(NavKey::class) {
-            routeSerializers.values.forEach { serializer ->
-                subclass(serializer = serializer)
-            }
+            registrations.forEach { register -> register() }
         }
     }
 }
