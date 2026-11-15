@@ -1,3 +1,5 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
@@ -24,16 +26,16 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.ui)
-            implementation(compose.foundation)
+            implementation("org.jetbrains.compose.runtime:runtime:1.10.3")
+            implementation("org.jetbrains.compose.ui:ui:1.10.3")
+            implementation("org.jetbrains.compose.foundation:foundation:1.10.3")
             implementation(libs.kotlinx.serialization.json)
             // Navigation 3 KMP's UI artifact brings its matching runtime transitively.
             implementation(libs.navigation3.ui)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation(compose.uiTest)
+            implementation("org.jetbrains.compose.ui:ui-test:1.10.3")
         }
     }
 }
