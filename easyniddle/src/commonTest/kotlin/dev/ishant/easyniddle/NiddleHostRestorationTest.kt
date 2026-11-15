@@ -3,7 +3,7 @@ package dev.ishant.easyniddle
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.StateRestorationTester
-import androidx.compose.ui.test.assertExists
+import androidx.compose.ui.test.fetchSemanticsNode
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.navigation3.runtime.NavBackStack
@@ -48,23 +48,22 @@ class NiddleHostRestorationTest {
                 )
             }
 
-            onNodeWithText("Home").assertExists()
+            onNodeWithText("Home").fetchSemanticsNode()
             runOnIdle {
                 backStack.add(HostRestoreProfile(userId = "user-42"))
             }
             waitForIdle()
-            onNodeWithText("Profile: user-42").assertExists()
+            onNodeWithText("Profile: user-42").fetchSemanticsNode()
 
             restorationTester.emulateSaveAndRestore()
             waitForIdle()
 
-            onNodeWithText("Profile: user-42").assertExists()
+            onNodeWithText("Profile: user-42").fetchSemanticsNode()
             runOnIdle {
                 assertEquals(2, backStack.size)
                 assertEquals(HostRestoreProfile("user-42"), backStack.last())
                 backStack.removeAt(backStack.lastIndex)
             }
             waitForIdle()
-            onNodeWithText("Home").assertExists()
+            onNodeWithText("Home").fetchSemanticsNode()
         }
-}
