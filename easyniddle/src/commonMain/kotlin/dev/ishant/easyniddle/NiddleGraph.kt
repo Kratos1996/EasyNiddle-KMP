@@ -12,6 +12,7 @@ public class NiddleGraph internal constructor(
     internal val destinationTypes: Set<KClass<out NavKey>>,
     public val nestedGraphs: List<NiddleGraph>,
 ) {
+    /** Returns whether [route]'s concrete type belongs to this graph tree. */
     public fun contains(route: NavKey): Boolean =
         route::class in destinationTypes || nestedGraphs.any { it.contains(route) }
 
@@ -30,18 +31,20 @@ public class NiddleGraph internal constructor(
     }
 }
 
-/** DSL for declaring route ownership and nested feature boundaries. */
+/** DSL receiver for declaring route ownership and nested feature boundaries. */
 public class NiddleGraphBuilder internal constructor(initialStartDestination: NavKey?) {
     private var configuredStartDestination: NavKey? = initialStartDestination
     private val destinations = linkedSetOf<KClass<out NavKey>>()
     private val children = mutableListOf<NiddleGraph>()
 
+    /** Start route owned by this graph; it must be registered with [destination]. */
     public var startDestination: NavKey
         get() = requireNotNull(configuredStartDestination) {
             "NiddleGraph.startDestination must be configured."
         }
         set(value) { configuredStartDestination = value }
 
+    /** Registers [routeType] in this graph; duplicate registrations are rejected. */
     public fun destination(routeType: KClass<out NavKey>) {
         require(destinations.add(routeType)) {
             "Duplicate destination registration: ${routeType.simpleName}"
@@ -53,6 +56,7 @@ public class NiddleGraphBuilder internal constructor(initialStartDestination: Na
         destination(Route::class)
     }
 
+    /** Adds a nested feature graph with its own [startDestination] and route declarations. */
     public fun nestedGraph(
         startDestination: NavKey,
         builder: NiddleGraphBuilder.() -> Unit,
