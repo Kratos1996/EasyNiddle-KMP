@@ -37,8 +37,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "9.3.0"
-      - name: Inspect multiplatform compile tasks
-        run: gradle :easyniddle:tasks --all
+      - name: Compile Android, Desktop, and WasmJs
+        run: >-
+          gradle
+          :easyniddle:compileAndroidMain
+          :easyniddle:compileKotlinDesktop
+          :easyniddle:compileKotlinWasmJs
 
   ios-compile:
     runs-on: macos-latest
