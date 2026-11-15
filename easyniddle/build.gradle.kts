@@ -25,7 +25,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.ui)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.navigation3.runtime)
+            // Navigation 3 KMP's UI artifact brings its matching runtime transitively.
             implementation(libs.navigation3.ui)
         }
         commonTest.dependencies {
