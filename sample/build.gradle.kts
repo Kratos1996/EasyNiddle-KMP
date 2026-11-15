@@ -11,6 +11,9 @@ kotlin {
     sourceSets {
         getByName("desktopMain").dependencies {
             implementation(project(":easyniddle"))
+            // The sample uses Navigation 3's entry DSL directly; the library keeps
+            // its Navigation 3 implementation dependency encapsulated.
+            implementation(libs.navigation3.ui)
             implementation(compose.desktop.currentOs)
             // Material 3 is versioned independently from the Compose Multiplatform plugin.
             implementation("org.jetbrains.compose.material3:material3:1.10.0-alpha05")
