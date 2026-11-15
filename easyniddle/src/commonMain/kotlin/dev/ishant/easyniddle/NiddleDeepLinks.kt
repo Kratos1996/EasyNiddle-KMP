@@ -21,7 +21,7 @@ public class NiddleDeepLinkMatch internal constructor(
     public fun queryParameter(name: String): String? = queryParameters[name]
 }
 
-private data class ParsedDeepLinkUri(
+internal data class ParsedDeepLinkUri(
     val scheme: String,
     val authority: String,
     val pathSegments: List<String>,
