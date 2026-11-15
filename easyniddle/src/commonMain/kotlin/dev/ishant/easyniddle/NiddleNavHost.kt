@@ -11,10 +11,8 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 
-/** Resolves a Navigation 3 key to its entry. */
 public typealias NiddleEntryProvider = (NavKey) -> NavEntry<NavKey>
 
-/** Creates a saveable, observable back stack for a Niddle navigation host. */
 @Composable
 public fun rememberNiddleBackStack(
     savedStateConfiguration: SavedStateConfiguration,
@@ -22,8 +20,8 @@ public fun rememberNiddleBackStack(
 ): NavBackStack<NavKey> = rememberNavBackStack(savedStateConfiguration, startDestination)
 
 /**
- * Navigation 3 host. The caller owns [backStack], so destinations can navigate
- * by mutating the same stack or using [NiddleController].
+ * Navigation 3 host. The app owns the back stack, keeping navigation explicit
+ * and easy to test. Use NiddleController for named stack operations.
  */
 @Composable
 public fun NiddleNavHost(
@@ -41,7 +39,22 @@ public fun NiddleNavHost(
     )
 }
 
-/** Build a Navigation 3 entry provider using its official typed entry DSL. */
+/** Builds entries using Navigation 3's official entry-provider DSL. */
 public fun niddleEntries(
     builder: EntryProviderScope<NavKey>.() -> Unit,
 ): NiddleEntryProvider = entryProvider(builder = builder)
+
+/**
+ * Builds entries and checks that every requested route belongs to [graph].
+ * Unknown route types fail immediately with a clear registration error.
+ */
+public fun niddleEntries(
+    graph: NiddleGraph,
+    builder: EntryProviderScope<NavKey>.() -> Unit,
+): NiddleEntryProvider {
+    val resolveEntry = entryProvider(builder = builder)
+    return { key ->
+        graph.requireContains(key)
+        resolveEntry(key)
+    }
+}

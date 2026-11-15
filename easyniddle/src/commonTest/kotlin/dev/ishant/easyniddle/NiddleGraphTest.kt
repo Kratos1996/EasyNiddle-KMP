@@ -18,10 +18,10 @@ class NiddleGraphTest {
     @Test
     fun registersTypedDestinationsAndFindsNestedRoutes() {
         val graph = niddleGraph(GraphHome) {
-            destination(GraphHome::class)
-            destination(GraphProfile::class)
+            destination<GraphHome>()
+            destination<GraphProfile>()
             nestedGraph(GraphSettings) {
-                destination(GraphSettings::class)
+                destination<GraphSettings>()
             }
         }
         assertTrue(graph.contains(GraphProfile("42")))
@@ -33,8 +33,8 @@ class NiddleGraphTest {
     fun rejectsDuplicateDestinationInSameGraph() {
         assertFailsWith<IllegalArgumentException> {
             niddleGraph(GraphHome) {
-                destination(GraphHome::class)
-                destination(GraphHome::class)
+                destination<GraphHome>()
+                destination<GraphHome>()
             }
         }
     }
@@ -43,12 +43,12 @@ class NiddleGraphTest {
     fun rejectsDuplicateDestinationAcrossNestedGraphs() {
         assertFailsWith<IllegalArgumentException> {
             niddleGraph(GraphHome) {
-                destination(GraphHome::class)
+                destination<GraphHome>()
                 nestedGraph(GraphProfile("child")) {
-                    destination(GraphProfile::class)
+                    destination<GraphProfile>()
                 }
                 nestedGraph(GraphProfile("second")) {
-                    destination(GraphProfile::class)
+                    destination<GraphProfile>()
                 }
             }
         }
@@ -58,7 +58,7 @@ class NiddleGraphTest {
     fun rejectsUnregisteredStartDestination() {
         assertFailsWith<IllegalArgumentException> {
             niddleGraph(GraphHome) {
-                destination(GraphProfile::class)
+                destination<GraphProfile>()
             }
         }
     }
@@ -66,8 +66,19 @@ class NiddleGraphTest {
     @Test
     fun reportsUnknownRouteAsNotContained() {
         val graph = niddleGraph(GraphHome) {
-            destination(GraphHome::class)
+            destination<GraphHome>()
         }
         assertFalse(graph.contains(GraphSettings))
+    }
+
+    @Test
+    fun requireContainsExplainsUnknownRoute() {
+        val graph = niddleGraph(GraphHome) {
+            destination<GraphHome>()
+        }
+        val error = assertFailsWith<IllegalArgumentException> {
+            graph.requireContains(GraphSettings)
+        }
+        assertTrue(error.message.orEmpty().contains("GraphSettings"))
     }
 }
