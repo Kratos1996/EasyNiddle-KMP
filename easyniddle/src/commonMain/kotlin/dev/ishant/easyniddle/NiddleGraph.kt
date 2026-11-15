@@ -15,6 +15,7 @@ public class NiddleGraph internal constructor(
     public fun contains(route: NavKey): Boolean =
         route::class in destinationTypes || nestedGraphs.any { it.contains(route) }
 
+    /** All route classes owned by this graph and every nested graph. */
     public val routeTypes: Set<KClass<out NavKey>>
         get() = buildSet {
             addAll(destinationTypes)
@@ -75,7 +76,6 @@ public class NiddleGraphBuilder internal constructor(initialStartDestination: Na
     }
 }
 
-/** Builds an immutable graph and validates start destinations and duplicate routes. */
 public fun niddleGraph(
     startDestination: NavKey,
     builder: NiddleGraphBuilder.() -> Unit,
