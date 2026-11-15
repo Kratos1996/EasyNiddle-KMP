@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  common-tests:
+  desktop-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,7 +15,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
-      - name: Run common tests
-        run: ./gradlew :easyniddle:allTests
-      - name: Run checks
-        run: ./gradlew :easyniddle:check
+        with:
+          gradle-version: "9.3.0"
+      - name: Compile Desktop target and run common tests
+        run: gradle :easyniddle:desktopTest

@@ -18,9 +18,14 @@ A developer-friendly, type-safe navigation layer for Compose Multiplatform, buil
 - Explicit stack behavior and independently testable operations.
 - Escape hatches to the underlying Navigation 3 primitives.
 
-## Project layout
-- `easyniddle`: reusable multiplatform library.
-- `sample`: planned consumer sample (added in the next implementation step).
+## Current features
+- Navigation 3 host adapter and official entry-provider bridge.
+- Per-host navigation controller convenience API.
+- Independent, snapshot-aware bottom-navigation stacks.
+- Deterministic stack operations with common unit tests.
+
+## Build
+The CI workflow installs Gradle 9.3.0 and runs the Desktop target tests. A Gradle wrapper will be added once the version baseline is finalized.
 
 ## Status
-This is the initial source foundation. The Navigation 3 adapter and public DSL are early APIs and require Gradle compilation against the selected KMP artifacts before being considered stable.
+Early development. Navigation 3 adapter and dependency compatibility must be validated on all targets before a stable release.
