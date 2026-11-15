@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "EasyNiddle-KMP"
-include(":easyniddle", ":sample")
+include(":easyniddle", ":sample", ":r8-smoke")
