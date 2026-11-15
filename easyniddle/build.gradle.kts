@@ -26,13 +26,14 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.ui)
+            implementation(compose.foundation)
             implementation(libs.kotlinx.serialization.json)
             // Navigation 3 KMP's UI artifact brings its matching runtime transitively.
             implementation(libs.navigation3.ui)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation("org.jetbrains.compose.ui:ui-test:1.10.3")
+            implementation(compose.uiTest)
         }
     }
 }
