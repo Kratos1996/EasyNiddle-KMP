@@ -1,39 +1,79 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Kratos1996/EasyNiddle/main/easyniddle/libSample/ChatGPT%20Image%20Jun%2027,%202026,%2004_59_45%20PM.png" alt="EasyNiddle — typed navigation made simple" width="100%">
+  <img src="https://raw.githubusercontent.com/Kratos1996/EasyNiddle/main/easyniddle/libSample/ChatGPT%20Image%20Jun%2027%2C%202026%2C%2004_59_45%20PM.png" alt="EasyNiddle — Type-safe Compose navigation" width="100%" />
 </p>
 
-<h1 align="center">EasyNiddle KMP</h1>
-<p align="center">
-  <strong>Easy, type-safe navigation for Compose Multiplatform.</strong><br>
-  One friendly API for Android, iOS, Desktop and Web — powered by Navigation 3.
-</p>
+<h1 align="center">EasyNiddle</h1>
 
 <p align="center">
-  <a href="https://github.com/Kratos1996/EasyNiddle-KMP/actions"><img src="https://img.shields.io/github/actions/workflow/status/Kratos1996/EasyNiddle-KMP/ci.yml?branch=main&label=CI" alt="CI status"></a>
-  <img src="https://img.shields.io/badge/Kotlin-2.3.20-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin 2.3.20">
-  <img src="https://img.shields.io/badge/Compose%20Multiplatform-1.10.3-4285F4" alt="Compose Multiplatform">
-  <img src="https://img.shields.io/badge/Navigation%203-KMP-0A7D55" alt="Navigation 3">
-  <a href="https://github.com/Kratos1996/EasyNiddle-KMP"><img src="https://img.shields.io/github/stars/Kratos1996/EasyNiddle-KMP?style=social" alt="GitHub stars"></a>
+  <strong>Navigation made simple. Across platforms.</strong><br/>
+  A developer-friendly, type-safe navigation layer for Compose Multiplatform, built on Navigation 3.
 </p>
 
 <p align="center">
-  <a href="docs/QUICK_START.md">Quick start</a> ·
-  <a href="docs/COOKBOOK.md">Cookbook</a> ·
-  <a href="docs/MIGRATION.md">Migration guide</a> ·
-  <a href="docs/ROADMAP.md">Roadmap</a>
+  <a href="https://github.com/Kratos1996/EasyNiddle-KMP/actions/workflows/ci.yml"><img src="https://github.com/Kratos1996/EasyNiddle-KMP/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"/></a>
+  <a href="https://github.com/Kratos1996/EasyNiddle-KMP/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License"/></a>
+  <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF.svg?logo=kotlin" alt="Kotlin Multiplatform"/></a>
+  <a href="https://developer.android.com/compose"><img src="https://img.shields.io/badge/UI-Compose-4285F4.svg" alt="Compose"/></a>
 </p>
 
 ---
 
 ## Why EasyNiddle?
 
-Navigation should not take more code than the screens themselves. EasyNiddle gives Compose Multiplatform developers a readable, type-safe API while keeping Navigation 3 underneath.
+Navigation should be one of the easiest parts of building an app—not a source of repetitive setup.
 
-It brings the familiar developer experience from the original [EasyNiddle for Android](https://github.com/Kratos1996/EasyNiddle) into a multiplatform library — without bringing Android-only APIs into common code.
+**EasyNiddle** is an open-source navigation convenience library created by **Ishant Sharma**. It builds on official Navigation 3 APIs and adds a clean, typed developer experience: route definitions, screen registration, navigation commands, independent tab histories, deep links, results, and configurable transitions.
 
-## Quick example
+The project continues the original EasyNiddle idea for Jetpack Compose while extending the architecture to **Compose Multiplatform**.
 
-Define serializable routes once:
+## At a glance
+
+| Capability | What it gives you |
+|---|---|
+| Type-safe routes | Kotlin route objects and data classes instead of string route names |
+| Familiar screen DSL | Register screens with `screen<Route> { }` |
+| Simple navigator | Navigate, pop, pop to, single top, and pop-up-to commands |
+| Navigation results | Send a value back to the previous destination |
+| Bottom navigation | Maintain independent histories for multiple tabs |
+| Nested graphs | Organize route ownership by feature |
+| Deep links | Resolve URL patterns into typed routes |
+| Saved-state configuration | Register route serializers for Navigation 3 stack persistence |
+| Transitions | Customize push, pop, and predictive-back visuals |
+| Multiplatform core | Share navigation logic across supported targets |
+
+## Supported platforms
+
+- **Android**
+- **iOS device** — `iosArm64`
+- **iOS simulators** — `iosSimulatorArm64` and **`iosX64` (Intel)**
+- **Desktop** — JVM
+- **Web** — `wasmJs`
+
+> The Intel simulator target is intentional. Please keep the dependency versions aligned with the compatibility notes in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
+
+## Installation
+
+> **Development status:** early development. The KMP artifact is not yet published to Maven Central. Use the project as a Gradle composite/subproject dependency until a signed release is available.
+
+Add the library module to your project:
+
+```kotlin
+// settings.gradle.kts
+include(":easyniddle")
+```
+
+```kotlin
+// app/build.gradle.kts
+dependencies {
+    implementation(project(":easyniddle"))
+}
+```
+
+See [Maven Central publishing](docs/ROADMAP.md) for release status. The original Android-only library has its own published coordinates and API; it is not the KMP artifact.
+
+## Quick start — familiar EasyNiddle style
+
+### 1. Define typed routes
 
 ```kotlin
 @Serializable
@@ -42,143 +82,152 @@ sealed interface AppRoute : SerializableRoute {
     data object Home : AppRoute
 
     @Serializable
-    data class Profile(val userId: String) : AppRoute
+    data class Details(val itemId: String) : AppRoute
+
+    @Serializable
+    data object Profile : AppRoute
 }
 ```
 
-Register the sealed route serializer once:
+`SerializableRoute` is the familiar route marker from the original EasyNiddle API. In KMP, route persistence uses **kotlinx.serialization**—not Java serialization.
+
+### 2. Register route serializers
+
+For process/state restoration, register every concrete route that can enter the back stack:
 
 ```kotlin
-val appState = niddleSavedStateConfiguration {
-    route(AppRoute.serializer())
+val appSavedState = niddleSavedStateConfiguration {
+    route(AppRoute.Home.serializer())
+    route(AppRoute.Details.serializer())
+    route(AppRoute.Profile.serializer())
 }
 ```
 
-Create your host with a screen DSL:
+### 3. Create the host with the screen DSL
 
 ```kotlin
-@Composable
-fun AppNavigation() {
-    val navigator = remember { NiddleNavigator() }
+val navigator = remember { NiddleNavigator() }
 
-    NiddleNavHost<AppRoute>(
-        startDestination = AppRoute.Home,
-        navigator = navigator,
-        savedStateConfiguration = appState,
-    ) {
-        screen<AppRoute.Home> {
-            val nav = LocalNiddleNavigator.current
-            HomeScreen(onOpenProfile = { nav.navigate(AppRoute.Profile("42")) })
-        }
+NiddleNavHost<AppRoute>(
+    startDestination = AppRoute.Home,
+    navigator = navigator,
+    savedStateConfiguration = appSavedState,
+) {
+    screen<AppRoute.Home> {
+        HomeScreen()
+    }
 
-        screen<AppRoute.Profile> { route ->
-            ProfileScreen(userId = route.userId)
-        }
+    screen<AppRoute.Details> { route ->
+        DetailsScreen(itemId = route.itemId)
+    }
+
+    screen<AppRoute.Profile> {
+        ProfileScreen()
     }
 }
 ```
 
-Navigate from any child composable:
+### 4. Navigate from any child composable
+
+```kotlin
+@Composable
+fun HomeScreen() {
+    val navigator = LocalNiddleNavigator.current
+
+    Button(onClick = {
+        navigator.navigate(AppRoute.Details(itemId = "42"))
+    }) {
+        Text("Open details")
+    }
+}
+```
+
+## Navigation commands
 
 ```kotlin
 val navigator = LocalNiddleNavigator.current
 
-navigator.navigate(AppRoute.Profile("42"))
+navigator.navigate(AppRoute.Profile)
+navigator.navigateSingleTop(AppRoute.Home)
+navigator.navigate(AppRoute.Profile, popUpTo = AppRoute.Home, inclusive = false)
 navigator.pop()
 navigator.popTo(AppRoute.Home)
-navigator.navigateSingleTop(AppRoute.Home)
-navigator.navigate(AppRoute.Profile("42"), popUpTo = AppRoute.Home, inclusive = false)
+navigator.popTo(AppRoute.Home, inclusive = true)
+navigator.navigateBottomBar(AppRoute.Profile)
+navigator.finish()
 ```
 
-**No string routes. No manual entry-provider setup for the common case.** For advanced use cases, the lower-level Navigation 3 back-stack and entry-provider APIs remain available.
+- `navigateSingleTop` returns to an existing matching route when present; otherwise it adds the destination.
+- `popTo` supports inclusive removal while protecting the root entry.
+- `navigateBottomBar` is a simple root-retaining tab switch. For independent per-tab back histories, use `NiddleMultiStack`.
 
-## Features
+## Results between destinations
 
-| Feature | What it gives you |
-|---|---|
-| Familiar screen DSL | `NiddleNavHost { screen<Route> { } }` |
-| Type-safe routes | Kotlin objects and data classes instead of string routes |
-| Standalone navigator | `NiddleNavigator` can be scoped or injected with your DI framework |
-| CompositionLocal | Access navigation with `LocalNiddleNavigator.current` |
-| Back-stack commands | Navigate, pop, pop-to, inclusive pop, single-top and pop-up-to |
-| Destination results | Send one-shot results back with `navigateBackWithResult` |
-| Bottom navigation | Simple bottom-bar command plus independent `NiddleMultiStack` histories |
-| Transitions | Configurable push, pop and predictive-back animations |
-| Navigation graph | Typed route registration, nested graphs and duplicate checks |
-| Deep links | Common URL pattern matching and typed route resolution |
-| State restoration | Polymorphic route serializer configuration for Navigation 3 |
-| Debug logging | Optional multiplatform log sink through `NiddleLogger` |
-
-## Supported platforms
-
-| Platform | Target |
-|---|---|
-| Android | Android KMP library target |
-| iOS device | `iosArm64` |
-| Apple Silicon simulator | `iosSimulatorArm64` |
-| Intel simulator | `iosX64` |
-| Desktop | JVM |
-| Web | WasmJs |
-
-**The Intel `iosX64` target is intentionally retained.** The current dependency baseline is chosen to keep that target available.
-
-## Installation
-
-The multiplatform artifact is not published to Maven Central yet. Until the first KMP release, add the module directly to your project:
+The compatibility host supports a one-shot result callback:
 
 ```kotlin
-dependencies {
-    implementation(project(":easyniddle"))
+NiddleNavHost<AppRoute>(
+    startDestination = AppRoute.Home,
+    navigator = navigator,
+    savedStateConfiguration = appSavedState,
+    onResult = { result ->
+        // Handle the returned value in the host
+    },
+) {
+    screen<AppRoute.Home> { HomeScreen() }
+    screen<AppRoute.Details> { DetailsScreen() }
 }
+
+// From the destination that is closing:
+LocalNiddleNavigator.current.navigateBackWithResult("Completed")
 ```
 
-Publishing coordinates and signed releases will be documented here when the KMP artifact is available. The original Android artifact is a separate project and release line.
+For explicitly typed result keys and feature-scoped storage, use `NiddleResultStore` and `NiddleResultKey<T>`. Results are in-memory and are not restored after process death.
 
-## More examples and guides
+## Advanced APIs
 
-- [Quick start](docs/QUICK_START.md) — routes, saved state, screen DSL and navigation.
-- [Cookbook](docs/COOKBOOK.md) — bottom navigation, results, deep links and custom transitions.
-- [Architecture](docs/ARCHITECTURE.md) — state ownership and Navigation 3 integration.
-- [Migration guide](docs/MIGRATION.md) — move from Navigation Compose or the original EasyNiddle API.
-- [Compatibility policy](docs/COMPATIBILITY.md) — target and dependency decisions.
-- [Roadmap](docs/ROADMAP.md) — current status and remaining work.
+The original-style host is an easy entry point. Larger apps can use the lower-level Navigation 3 facade when they need explicit state ownership:
 
-## Build and verification
+- `NiddleRoute` and `niddleGraph { }` for validated route graphs.
+- `rememberNiddleBackStack(...)` and `NiddleController` for caller-owned stack control.
+- `niddleEntries(graph) { entry<Route> { ... } }` for graph-aware entry registration.
+- `NiddleMultiStack` for independent bottom-navigation back stacks.
+- `niddleDeepLinks { deepLink("https://example.com/path/{id}") { ... } }` for typed URL resolution.
+- `NiddleResultStore` for typed one-shot results.
+- `niddleSlideInTransition`, `niddleSlidePopTransition`, and `niddlePredictiveFadeTransition` for transition defaults.
 
-CI uses Java 21 and Gradle 9.3.0. It checks Android, Desktop JVM, WasmJs, iOS including `iosX64`, Desktop sample compilation and common tests, the minified Android consumer build with R8, and Kotlin ABI compatibility.
+For details and platform caveats, read the [Quick start](docs/QUICK_START.md), [Cookbook](docs/COOKBOOK.md), [Architecture](docs/ARCHITECTURE.md), and [Migration guide](docs/MIGRATION.md).
 
-Run the sample after the Gradle Wrapper is present:
+## Built by Ishant Sharma
 
-```bash
-./gradlew :sample:run
-```
+<p align="center">
+  <img src="https://github.com/Kratos1996.png" alt="Ishant Sharma GitHub avatar" width="112" />
+</p>
 
-## Known limitations
+<p align="center">
+  <strong>Ishant Sharma</strong><br/>
+  Android Engineer · Kotlin Multiplatform · Fintech · Web3
+</p>
 
-- Host-level Android/iOS process recreation integration tests are still planned. Common serializer round-trip tests do not replace lifecycle tests in a real app.
-- Platform App Links, Universal Links and browser URL delivery are configured by the host application.
-- `NiddleResultStore` and the command-based result stream are in-memory; they are not restored after process death.
-- Maven Central publishing and signed KMP releases are not configured yet.
+EasyNiddle is an independent open-source project designed and developed by **Ishant Sharma**.
+
+- GitHub: [@Kratos1996](https://github.com/Kratos1996)
+- LinkedIn: [Ishant Sharma](https://www.linkedin.com/in/ishant-sharma/)
+- Project repository: [EasyNiddle-KMP](https://github.com/Kratos1996/EasyNiddle-KMP)
+- Original Android library: [EasyNiddle](https://github.com/Kratos1996/EasyNiddle)
+
+*Built with Kotlin, Compose Multiplatform, and a lot of care for developer experience.*
+
+## Contributing
+
+Issues, bug reports, and pull requests are welcome. Please include the target platform, Kotlin/Compose versions, a minimal reproduction, and the expected versus actual behavior.
+
+## License
+
+EasyNiddle is distributed under the [Apache License 2.0](LICENSE).
 
 ---
 
-## Created and maintained by
-
 <p align="center">
-  <img src="https://github.com/Kratos1996.png?size=240" alt="Ishant Sharma" width="140" style="border-radius:50%">
+  <sub>© Ishant Sharma · EasyNiddle · Open source</sub>
 </p>
-
-<h3 align="center">Ishant Sharma</h3>
-<p align="center">
-  <strong>Creator & Maintainer of EasyNiddle</strong><br>
-  Kotlin · Android · Compose Multiplatform · Fintech · Web3
-</p>
-<p align="center">
-  <a href="https://github.com/Kratos1996">GitHub Profile</a> ·
-  <a href="https://github.com/Kratos1996/EasyNiddle">Original Android Library</a> ·
-  <a href="mailto:ishant.sharma1947@gmail.com">Email</a>
-</p>
-
-EasyNiddle started as a small effort to make Jetpack Navigation 3 easier to use. This KMP edition continues that idea across platforms: simple APIs for everyday navigation, with the full Navigation 3 foundation available when you need more control.
-
-**Built with Kotlin and Compose Multiplatform.**
