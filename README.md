@@ -55,29 +55,26 @@ The project continues the original EasyNiddle idea for Jetpack Compose while ext
 
 EasyNiddle is available via [JitPack](https://jitpack.io/#Kratos1996/EasyNiddle-KMP).
 
-### 1. Add JitPack repository
+### 1. Add the JitPack repository to your root `settings.gradle.kts`
 
 ```kotlin
-// settings.gradle.kts
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven("https://jitpack.io")
+        maven { url = uri("https://jitpack.io") }
     }
 }
 ```
 
-### 2. Add dependency
+### 2. Add the dependency
 
 ```kotlin
-// build.gradle.kts (commonMain dependencies)
 dependencies {
-    implementation("com.github.Kratos1996.EasyNiddle-KMP:easyniddle:Tag")
+    implementation("com.github.Kratos1996.EasyNiddle-KMP:easyniddle:0.1.1")
 }
 ```
-
-> Replace `Tag` with a release version tag (e.g. `v0.1.0`) or commit hash.
 
 ## Quick start — familiar EasyNiddle style
 
