@@ -1,166 +1,112 @@
 # Quick start
 
-EasyNiddle has two usage styles. Start with the compact compatibility DSL for a typical app. Use the lower-level API when you need complete ownership of the back stack and graph.
+EasyNiddle offers two ways to build a navigation host:
 
-## 1. Define serializable routes
+1. **Familiar API:** `NiddleNavHost(startDestination) { screen<Route> { } }` with `NiddleNavigator`.
+2. **Explicit API:** caller-owned Navigation 3 back stack, `NiddleGraph`, `niddleEntries`, and `NiddleController`.
 
-A sealed route family is the simplest pattern. The original Android name `SerializableRoute` is available as a multiplatform marker; it uses kotlinx.serialization, not Java serialization.
+Use the familiar API when migrating an app from the original Android EasyNiddle library. Use the explicit API when you want to own the stack lifecycle and navigation wiring.
+
+## 1. Define routes
 
 ```kotlin
 @Serializable
 sealed interface AppRoute : SerializableRoute {
-    @Serializable data object Home : AppRoute
-    @Serializable data class Profile(val userId: String) : AppRoute
-    @Serializable data object Settings : AppRoute
+    @Serializable
+    data object Home : AppRoute
+
+    @Serializable
+    data class Profile(val userId: String) : AppRoute
+
+    @Serializable
+    data object Settings : AppRoute
 }
 ```
 
-## 2. Register state serializers once
+The KMP marker `SerializableRoute` extends `NiddleRoute`. Route state uses kotlinx.serialization. It does not use Java serialization.
 
-For a sealed route interface/class, register its generated serializer. Its annotated sealed subtypes are handled by that serializer.
+## 2. Register serializers
 
 ```kotlin
-val appState = niddleSavedStateConfiguration {
-    route(AppRoute.serializer())
+val appSavedState = niddleSavedStateConfiguration {
+    route(AppRoute.Home.serializer())
+    route(AppRoute.Profile.serializer())
+    route(AppRoute.Settings.serializer())
 }
 ```
 
-For unrelated route classes, register each concrete serializer separately.
+Every concrete route that can be added to the stack must be registered. Do not rely on automatic serializer discovery.
 
-## 3. Use the simple host and screen DSL
-
-```kotlin
-@Composable
-fun AppNavigation() {
-    val navigator = remember { NiddleNavigator() }
-
-    NiddleNavHost<AppRoute>(
-        startDestination = AppRoute.Home,
-        navigator = navigator,
-        savedStateConfiguration = appState,
-    ) {
-        screen<AppRoute.Home> {
-            val nav = LocalNiddleNavigator.current
-            HomeScreen(
-                onProfileClick = { nav.navigate(AppRoute.Profile("42")) },
-                onSettingsClick = { nav.navigate(AppRoute.Settings) },
-            )
-        }
-
-        screen<AppRoute.Profile> { route ->
-            ProfileScreen(userId = route.userId)
-        }
-
-        screen<AppRoute.Settings> {
-            SettingsScreen()
-        }
-    }
-}
-```
-
-The same navigator instance can be provided by Hilt, Koin or your own DI setup. When omitted, the host remembers a navigator for that host.
-
-## 4. Navigate from any child composable
+## 3. Use the familiar screen DSL
 
 ```kotlin
-val navigator = LocalNiddleNavigator.current
+val navigator = remember { NiddleNavigator() }
 
-navigator.navigate(AppRoute.Profile("42"))
-navigator.pop()
-navigator.popTo(AppRoute.Home)
-navigator.popTo(AppRoute.Home, inclusive = true)
-navigator.navigateSingleTop(AppRoute.Home)
-navigator.navigate(AppRoute.Settings, popUpTo = AppRoute.Home, inclusive = false)
-```
-
-`navigateSingleTop` returns to the last matching route if one exists; otherwise it adds the route. `popTo` preserves the root and does not empty the stack.
-
-## 5. Receive a result
-
-Collect the same navigator's result stream:
-
-```kotlin
-val result by navigator.navigationResult.collectAsState(initial = null)
-```
-
-From the result destination:
-
-```kotlin
-LocalNiddleNavigator.current.navigateBackWithResult("Saved successfully")
-```
-
-You can also use the host's `onResult` callback. Results are in-memory and are not restored after process death.
-
-## 6. Handle platform finish and custom navigation
-
-The common API does not import Android `Activity` or `Context`. Supply the platform behavior from the host:
-
-```kotlin
 NiddleNavHost<AppRoute>(
     startDestination = AppRoute.Home,
     navigator = navigator,
-    savedStateConfiguration = appState,
-    onFinish = { /* close the current platform window/activity */ },
-    onNavigateCustom = { route -> /* app-specific handling */ },
+    savedStateConfiguration = appSavedState,
 ) {
-    // screen declarations
+    screen<AppRoute.Home> { HomeScreen() }
+    screen<AppRoute.Profile> { route -> ProfileScreen(route.userId) }
+    screen<AppRoute.Settings> { SettingsScreen() }
 }
 ```
 
-## 7. Use the advanced Navigation 3 API when needed
-
-You can still own the back stack directly and use graph validation:
+Inside any destination:
 
 ```kotlin
-val backStack = rememberNiddleBackStack(appState, AppRoute.Home)
-val controller = NiddleController(backStack)
+val navigator = LocalNiddleNavigator.current
+navigator.navigate(AppRoute.Profile("user-42"))
+navigator.pop()
+```
 
-val graph = niddleGraph(startDestination = AppRoute.Home) {
-    destination<AppRoute.Home>()
-    destination<AppRoute.Profile>()
-    destination<AppRoute.Settings>()
+The host exposes `onBack`, `onFinish`, `onNavigateCustom`, and `onResult` callbacks for platform/app behavior.
+
+## 4. Navigation commands
+
+```kotlin
+navigator.navigate(AppRoute.Profile("42"))
+navigator.navigate(AppRoute.Settings, popUpTo = AppRoute.Home, inclusive = false)
+navigator.navigateSingleTop(AppRoute.Home)
+navigator.pop()
+navigator.popTo(AppRoute.Home)
+navigator.navigateBackWithResult("saved")
+```
+
+`navigateBottomBar` is a convenience for a simple root-retaining tab switch. Use `NiddleMultiStack` if each tab must preserve its own complete history.
+
+## 5. Advanced caller-owned host
+
+For explicit state ownership, configure a Navigation 3 stack and register entries:
+
+```kotlin
+val graph = niddleGraph(startDestination = HomeRoute) {
+    destination<HomeRoute>()
+    destination<ProfileRoute>()
 }
 
+val savedState = niddleSavedStateConfiguration {
+    route(HomeRoute.serializer())
+    route(ProfileRoute.serializer())
+}
+
+val backStack = rememberNiddleBackStack(savedState, HomeRoute)
+val controller = remember(backStack) { NiddleController(backStack) }
 val entries = niddleEntries(graph) {
-    entry<AppRoute.Home> { HomeScreen() }
-    entry<AppRoute.Profile> { route -> ProfileScreen(route.userId) }
-    entry<AppRoute.Settings> { SettingsScreen() }
+    entry<HomeRoute> { HomeScreen { controller.navigate(ProfileRoute("42")) } }
+    entry<ProfileRoute> { route -> ProfileScreen(route.userId) }
 }
 
 NiddleNavHost(backStack = backStack, entryProvider = entries)
 ```
 
-## 8. Custom transitions
+## 6. More recipes
 
-```kotlin
-NiddleNavHost(
-    backStack = backStack,
-    entryProvider = entries,
-    transitionSpec = niddleSlideInTransition,
-    popTransitionSpec = niddleSlidePopTransition,
-    predictivePopTransitionSpec = niddlePredictiveFadeTransition,
-)
-```
+See [Cookbook](COOKBOOK.md) for bottom tabs, nested graphs, deep links, result passing, and transition customization.
 
-Navigation 3 controls the predictive-back gesture; the lambda describes the transition visuals.
+## Limitations to know
 
-## 9. Deep links
-
-```kotlin
-val deepLinks = niddleDeepLinks {
-    deepLink("https://example.com/users/{userId}") { match ->
-        AppRoute.Profile(match.pathParameter("userId"))
-    }
-}
-
-val route = deepLinks.requireResolve(incomingUrl)
-backStack.add(route)
-```
-
-Android App Links, iOS Universal Links and browser URL receiving remain the host app's responsibility.
-
-## 10. Independent bottom-tab histories
-
-Use `NiddleMultiStack` when each bottom-navigation tab should retain its own history. `NiddleNavigator.navigateBottomBar` is a simpler root-retaining convenience command, not a replacement for independent tab stacks.
-
-See [Cookbook](COOKBOOK.md) for more recipes.
+- Host-level process recreation tests on Android/iOS are still planned; common serializer round-trip tests are not a substitute for app lifecycle tests.
+- Register platform App Links/Universal Links/browser handlers in the host application; EasyNiddle resolves URLs to routes but does not register OS handlers.
+- `NiddleResultStore` and the compatibility `onResult` flow are in-memory; do not use them for durable data.
