@@ -49,11 +49,12 @@ public class NiddleSerializersModuleBuilder internal constructor() {
 /**
  * Creates Navigation 3's save-state configuration for all registered route types.
  *
- * For a sealed route family, register the generated serializer once:
+ * Register every concrete route serializer:
  *
  * ```kotlin
  * val config = niddleSavedStateConfiguration {
- *     route(AppRoute.serializer())
+ *     route(AppRoute.Home.serializer())
+ *     route(AppRoute.Profile.serializer())
  * }
  * ```
  */

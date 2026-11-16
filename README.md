@@ -53,23 +53,31 @@ The project continues the original EasyNiddle idea for Jetpack Compose while ext
 
 ## Installation
 
-> **Development status:** early development. The KMP artifact is not yet published to Maven Central. Use the project as a Gradle composite/subproject dependency until a signed release is available.
+EasyNiddle is available via [JitPack](https://jitpack.io/#Kratos1996/EasyNiddle-KMP).
 
-Add the library module to your project:
+### 1. Add JitPack repository
 
 ```kotlin
 // settings.gradle.kts
-include(":easyniddle")
-```
-
-```kotlin
-// app/build.gradle.kts
-dependencies {
-    implementation(project(":easyniddle"))
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://jitpack.io")
+    }
 }
 ```
 
-See [Maven Central publishing](docs/ROADMAP.md) for release status. The original Android-only library has its own published coordinates and API; it is not the KMP artifact.
+### 2. Add dependency
+
+```kotlin
+// build.gradle.kts (commonMain dependencies)
+dependencies {
+    implementation("com.github.Kratos1996.EasyNiddle-KMP:easyniddle:Tag")
+}
+```
+
+> Replace `Tag` with a release version tag (e.g. `v0.1.0`) or commit hash.
 
 ## Quick start — familiar EasyNiddle style
 
@@ -175,7 +183,7 @@ NiddleNavHost<AppRoute>(
     },
 ) {
     screen<AppRoute.Home> { HomeScreen() }
-    screen<AppRoute.Details> { DetailsScreen() }
+    screen<AppRoute.Details> { route -> DetailsScreen(itemId = route.itemId) }
 }
 
 // From the destination that is closing:
@@ -224,7 +232,7 @@ Issues, bug reports, and pull requests are welcome. Please include the target pl
 
 ## License
 
-EasyNiddle is distributed under the [Apache License 2.0](LICENSE).
+EasyNiddle is distributed under the [Apache License 2.0](https://github.com/Kratos1996/EasyNiddle-KMP/blob/main/LICENSE).
 
 ---
 

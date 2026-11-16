@@ -1,0 +1,14 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/easyniddle/build
+/sample/build
+/r8-smoke/build
+/captures
+.externalNativeBuild
+.cxx
+*.hprof
+.kotlin

@@ -96,10 +96,8 @@ public fun NiddleNavHost(
  * }
  * ```
  *
- * Provide [savedStateConfiguration] for the route family. For a sealed
- * `@Serializable` route interface, one `route(AppRoute.serializer())`
- * registration covers its annotated subtypes. For unrelated route classes,
- * register each concrete serializer separately.
+ * Provide [savedStateConfiguration] for the route family by registering each
+ * concrete route serializer with `route(...)`.
  *
  * @param startDestination initial route when no saved stack is restored.
  * @param navigator command facade; defaults to a host-scoped remembered instance.

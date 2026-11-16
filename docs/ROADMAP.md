@@ -31,5 +31,7 @@
 - [x] Minified Android consumer verification with R8
 - [x] Public API KDoc
 - [x] Quick start, architecture, migration guide, and cookbook
-- [ ] Gradle Wrapper bootstrap and committed wrapper files
+- [x] Gradle Wrapper bootstrap and committed wrapper files
+- [x] JitPack publishing configuration (`maven-publish` & `jitpack.yml`)
+- [x] Automated Maven publishing workflow (`.github/workflows/publish.yml`)
 - [ ] Maven Central publishing and signed releases

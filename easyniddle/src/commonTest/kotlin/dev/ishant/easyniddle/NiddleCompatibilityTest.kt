@@ -23,7 +23,8 @@ class NiddleCompatibilityTest {
     @Test
     fun sealedLegacyRouteMarkerSerializesThroughOneRegisteredSerializer() {
         val module = niddleSavedStateConfiguration {
-            route(CompatibilityAppRoute.serializer())
+            route(CompatibilityAppRoute.Home.serializer())
+            route(CompatibilityAppRoute.Profile.serializer())
         }.serializersModule
 
         val json = Json { serializersModule = module }

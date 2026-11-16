@@ -1,7 +1,10 @@
 @file:OptIn(
-    org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class,
-    org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class,
+    ExperimentalWasmDsl::class,
+    ExperimentalAbiValidation::class,
 )
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -9,7 +12,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.vanniktech.maven.publish)
 }
+
+group = "com.github.Kratos1996"
+version = "0.1.0"
 
 kotlin {
     // Track the published Kotlin API so accidental binary-breaking changes are caught in CI.
@@ -19,7 +26,7 @@ kotlin {
 
     android {
         namespace = "dev.ishant.easyniddle"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 23
     }
     iosArm64()
@@ -43,6 +50,38 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
+        }
+    }
+}
+
+mavenPublishing {
+    coordinates(
+        groupId = "com.github.Kratos1996",
+        artifactId = "easyniddle",
+        version = "0.1.0",
+    )
+
+    pom {
+        name.set("EasyNiddle")
+        description.set("Type-safe navigation layer for Compose Multiplatform built on Navigation 3")
+        url.set("https://github.com/Kratos1996/EasyNiddle-KMP")
+        licenses {
+            license {
+                name.set("The Apache Software License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("repo")
+            }
+        }
+        developers {
+            developer {
+                id.set("Kratos1996")
+                name.set("Ishant Sharma")
+            }
+        }
+        scm {
+            connection.set("scm:git:github.com/Kratos1996/EasyNiddle-KMP.git")
+            developerConnection.set("scm:git:ssh://github.com/Kratos1996/EasyNiddle-KMP.git")
+            url.set("https://github.com/Kratos1996/EasyNiddle-KMP")
         }
     }
 }
