@@ -12,14 +12,24 @@ kotlin {
     androidTarget()
     jvm("desktop")
 
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":easyniddle"))
             implementation(libs.navigation3.ui)
-            implementation("org.jetbrains.compose.material3:material3:1.10.0-alpha05")
-            implementation("org.jetbrains.compose.foundation:foundation:1.10.3")
-            implementation("org.jetbrains.compose.ui:ui:1.10.3")
-            implementation("org.jetbrains.compose.runtime:runtime:1.10.3")
+            implementation(compose.material3)
+            implementation(compose.foundation)
+            implementation(compose.ui)
+            implementation(compose.runtime)
         }
         getByName("desktopMain").dependencies {
             implementation(compose.desktop.currentOs)
@@ -36,8 +46,8 @@ extensions.configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "dev.ishant.easyniddle.sample"
-        minSdk = 23
-        targetSdk = 36
+        minSdk = 24
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
     }
@@ -51,6 +61,16 @@ extensions.configure<ApplicationExtension> {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+        }
+    }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
     }
 }
 

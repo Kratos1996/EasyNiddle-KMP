@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "dev.ishant.easyniddle.r8smoke"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "dev.ishant.easyniddle.r8smoke"
-        minSdk = 23
-        targetSdk = 36
+        minSdk = 24
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
     }
